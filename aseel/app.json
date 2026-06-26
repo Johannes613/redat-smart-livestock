@@ -1,0 +1,46 @@
+{
+  "expo": {
+    "name": "ASEEL",
+    "slug": "aseel",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0A0A14"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.aseel.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "ASEEL needs your location to track camels and show nearby community alerts.",
+        "NSCameraUsageDescription": "ASEEL uses the camera for camel photos and QR code scanning.",
+        "NSMicrophoneUsageDescription": "ASEEL uses the microphone for Arabic voice notes.",
+        "NSPhotoLibraryUsageDescription": "ASEEL accesses photos to upload camel images."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0A0A14",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "package": "com.aseel.app"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-font",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow ASEEL to use your location."
+        }
+      ]
+    ]
+  }
+}
