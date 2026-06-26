@@ -11,7 +11,7 @@
 
 ---
 
-## ⚠️ The Problem
+## The Problem
 
 Camels are deeply intertwined with the cultural heritage of Al Qua'a and the wider Al Ain region. They are also incredibly valuable livestock assets, with some breeds and racing camels holding immense economic value. However, modern camel farming faces several critical challenges:
 
