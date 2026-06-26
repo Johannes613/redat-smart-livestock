@@ -3,6 +3,7 @@ import { View, Image, Pressable } from 'react-native';
 import { Colors, Spacing, Radius } from '../../theme';
 import { Card, Text, Badge } from '../ui';
 import { Ionicons } from '@expo/vector-icons';
+import { useAuthStore } from '../../store/useAuthStore';
 
 export const PIN_CONFIG = {
   water_source:         { label: 'Water Source',    icon: 'water-outline',         color: Colors.pin.water },
@@ -28,6 +29,7 @@ function timeAgo(dateStr) {
 }
 
 export function PinCard({ pin, onPress, onLike }) {
+  const currentUser = useAuthStore(state => state.currentUser);
   const cfg = PIN_CONFIG[pin.category] ?? PIN_CONFIG.voice_note;
   return (
     <Pressable onPress={onPress} accessibilityRole="button">
@@ -64,7 +66,7 @@ export function PinCard({ pin, onPress, onLike }) {
 
         {/* Footer */}
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: Spacing[3] }}>
-          <Text variant="caption" color={Colors.text.tertiary}>{pin.authorName} · {timeAgo(pin.createdAt)}</Text>
+          <Text variant="caption" color={Colors.text.tertiary}>{currentUser ? currentUser.name : pin.authorName} · {timeAgo(pin.createdAt)}</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing[4] }}>
             <Pressable onPress={onLike} style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }} hitSlop={8} accessibilityRole="button" accessibilityLabel={`Like, ${pin.likes} likes`}>
               <Ionicons name="heart-outline" size={15} color={Colors.text.tertiary} />

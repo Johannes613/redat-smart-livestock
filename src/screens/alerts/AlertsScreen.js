@@ -4,7 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Spacing, Radius } from '../../theme';
 import { Text, Card, Badge } from '../../components/ui';
-import { mockAlerts, mockNotifications } from '../../data/mockData';
+import { mockNotifications } from '../../data/mockData';
+import { useAlertStore } from '../../store/useAlertStore';
 
 const SEVERITY_CFG = {
   low:      { color: Colors.info,    icon: 'information-circle-outline', label: 'Low' },
@@ -49,10 +50,10 @@ function AlertItem({ alert, onDismiss }) {
 }
 
 export function AlertsScreen({ navigation }) {
-  const [alerts, setAlerts] = useState(mockAlerts);
+  const alerts = useAlertStore(state => state.alerts);
+  const dismiss = useAlertStore(state => state.dismissAlert);
+  const markAsRead = useAlertStore(state => state.markAsRead);
   const [tab, setTab]       = useState('alerts'); // 'alerts' | 'notifications'
-
-  const dismiss = (id) => setAlerts(a => a.filter(x => x.id !== id));
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.bg.base }} edges={['top']}>

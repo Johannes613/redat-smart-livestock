@@ -27,7 +27,7 @@ function Metric({ icon, label, value, color, alert }) {
   );
 }
 
-export function CollarWidget({ reading }) {
+export function CollarWidget({ reading, distance }) {
   const tempAlert = reading.bodyTemp > 39.5;
   const battAlert = reading.batteryLevel < 20;
 
@@ -44,7 +44,7 @@ export function CollarWidget({ reading }) {
         <Metric icon="thermometer-outline" label="Body Temp" value={`${reading.bodyTemp.toFixed(1)}°C`} color={tempAlert ? Colors.error : Colors.text.primary} alert={tempAlert} />
         <Metric icon="walk-outline"        label="Activity"  value={`${reading.activityLevel}%`} color={reading.activityLevel < 20 ? Colors.warning : Colors.text.primary} />
         <Metric icon="battery-half-outline" label="Battery"  value={`${reading.batteryLevel}%`} color={battAlert ? Colors.error : Colors.success} alert={battAlert} />
-        <Metric icon="wifi-outline"        label="Signal"    value={`${reading.signalStrength}dBm`} color={Colors.info} />
+        <Metric icon="location-outline"        label="Distance"    value={`${distance ?? '-- '}km`} color={Colors.info} />
       </View>
     </Card>
   );

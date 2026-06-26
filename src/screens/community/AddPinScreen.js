@@ -8,6 +8,7 @@ import { PIN_CONFIG } from '../../components/community/PinCard';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { useCommunityStore } from '../../store/useCommunityStore';
+import { useAuthStore } from '../../store/useAuthStore';
 import { mockUser } from '../../data/mockData';
 
 const CATEGORIES = Object.entries(PIN_CONFIG).map(([key, cfg]) => ({ key, ...cfg }));
@@ -20,6 +21,7 @@ export function AddPinScreen({ navigation }) {
   const [image, setImage] = useState(null);
   const [location, setLocation] = useState(null);
   const [locLoading, setLocLoading] = useState(true);
+  const currentUser = useAuthStore(state => state.currentUser);
   const set = (k) => (v) => setForm(f => ({ ...f, [k]: v }));
 
   React.useEffect(() => {
@@ -52,8 +54,8 @@ export function AddPinScreen({ navigation }) {
 
     const newPin = {
       id: Date.now().toString(),
-      authorId: mockUser.id,
-      authorName: mockUser.name,
+      authorId: currentUser?.id || mockUser.id,
+      authorName: currentUser?.name || mockUser.name,
       category: form.category,
       title: form.title,
       description: form.description,

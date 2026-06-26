@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Colors } from '../theme';
 import { DefaultTheme } from '@react-navigation/native';
+import { useAuthStore } from '../store/useAuthStore';
 
 import { TabNavigator }       from './TabNavigator';
 import { LoginScreen }        from '../screens/auth/LoginScreen';
@@ -26,8 +27,7 @@ const screenOptions = {
 };
 
 export function AppNavigator() {
-  // In a real app this would check auth state from context/store
-  const isAuthenticated = true;
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated);
 
   return (
     <NavigationContainer

@@ -18,7 +18,7 @@ export function AlertBanner({ alert, onPress, onDismiss }) {
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: Spacing[3], padding: Spacing[3], backgroundColor: Colors.bg.card, borderRadius: Radius.lg, borderWidth: 1, borderColor: Colors.border.default }}>
         <Ionicons name={cfg.icon} size={20} color={cfg.color} />
         <View style={{ flex: 1, gap: 2 }}>
-          <Text variant="titleSmall" color={cfg.color}>{alert.type.replace(/_/g, ' ').toUpperCase()}</Text>
+          <Text variant="titleSmall" color={Colors.text.primary}>{alert.type.replace(/_/g, ' ').toUpperCase()}</Text>
           <Text variant="bodySmall" color={Colors.text.secondary} numberOfLines={2}>{alert.message}</Text>
           {alert.recommendation && <Text variant="caption" color={Colors.text.tertiary} numberOfLines={1}>Rec: {alert.recommendation}</Text>}
         </View>

@@ -1,11 +1,13 @@
 import React, { useState, useRef } from 'react';
-import { View, FlatList, Pressable, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, FlatList, Pressable, TextInput, KeyboardAvoidingView, Platform, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Spacing, Radius, FontFamily, FontSize } from '../../theme';
 import { Text, Card, Badge } from '../../components/ui';
-import { mockChatHistory } from '../../data/mockData';
+import { mockCamels, mockAlerts, mockWeather } from '../../data/mockData';
+import { useAuthStore } from '../../store/useAuthStore';
+import { useCommunityStore } from '../../store/useCommunityStore';
 
 const QUICK_QUESTIONS = [
   'Where is the nearest water source?',
@@ -15,27 +17,60 @@ const QUICK_QUESTIONS = [
   'Nearest vet in Al Qua\'a?',
 ];
 
-const AI_RESPONSES = {
-  default: 'I am analyzing your farm data and community reports to answer your question. Based on current conditions in Al Qua\'a, here is what I found...',
-  water: 'The closest verified water source is the fresh water well at Wadi Al Ain, ~2.1km northeast. It was last verified 2 days ago and supports up to 50 camels.',
-  disease: 'There is an active camel pox report 3.2km from your farm, posted by Khalid Al Zaabi. I recommend isolating any new camels and monitoring your herd for skin lesions.',
-  grazing: 'Community reports indicate excellent grazing near Jebel Hafit foothills — green patches after last week\'s rain. 31 farmers have liked this report.',
-  stress: 'For heat stress: move the camel to shade immediately, provide cool water every 30 minutes, wet the neck and head, and monitor body temperature. Call a vet if temperature exceeds 41°C.',
-};
+const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
 
-function getResponse(msg) {
-  const lower = msg.toLowerCase();
-  if (lower.includes('water')) return AI_RESPONSES.water;
-  if (lower.includes('disease') || lower.includes('outbreak')) return AI_RESPONSES.disease;
-  if (lower.includes('grazing')) return AI_RESPONSES.grazing;
-  if (lower.includes('stress') || lower.includes('heat')) return AI_RESPONSES.stress;
-  return AI_RESPONSES.default;
+async function callGeminiAPI(history, contextData) {
+  let startIndex = 0;
+  while (startIndex < history.length && history[startIndex].role === 'assistant') {
+    startIndex++;
+  }
+
+  const contents = history.slice(startIndex).map(msg => ({
+    role: msg.role === 'assistant' ? 'model' : 'user',
+    parts: [{ text: msg.content }]
+  }));
+
+  const systemText = `You are REDAT AI, an expert AI assistant for camel farmers in Al Qua'a, UAE.
+Here is the current live data from the app:
+Farmer: ${contextData.user?.name} (Farm: ${contextData.user?.farmName})
+Camels in herd: ${JSON.stringify(contextData.camels)}
+Community Map Pins (water, grazing, diseases): ${JSON.stringify(contextData.pins)}
+Active Alerts: ${JSON.stringify(contextData.alerts)}
+Weather: ${JSON.stringify(contextData.weather)}
+
+Use this context to give highly specific, accurate, and concise advice. Be friendly and helpful.`;
+
+  try {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system_instruction: {
+          parts: [{ text: systemText }]
+        },
+        contents
+      })
+    });
+    const data = await response.json();
+    if (data.candidates && data.candidates[0].content.parts[0].text) {
+      return data.candidates[0].content.parts[0].text;
+    }
+    console.warn("Gemini Error:", data);
+    return "API Error: " + JSON.stringify(data);
+  } catch (err) {
+    console.warn("Gemini Network Error:", err);
+    return "Network Error: " + err.message;
+  }
 }
 
 export function ChatScreen({ navigation }) {
-  const [messages, setMessages] = useState(mockChatHistory);
-  const [input, setInput]       = useState('');
-  const [loading, setLoading]   = useState(false);
+  const currentUser = useAuthStore(state => state.currentUser);
+  const communityPins = useCommunityStore(state => state.pins);
+  const [messages, setMessages] = useState([
+    { id: '1', role: 'assistant', content: `Hello ${currentUser ? currentUser.name.split(' ')[0] : 'Farmer'}, I'm REDAT AI. How can I help with your herd today?`, timestamp: new Date().toISOString() },
+  ]);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
   const [recording, setRecording] = useState(false);
   const [processingAudio, setProcessingAudio] = useState(false);
   const listRef = useRef(null);
@@ -54,18 +89,30 @@ export function ChatScreen({ navigation }) {
     }
   };
 
-  const sendMessage = (text) => {
+  const sendMessage = async (text) => {
     const content = (text ?? input).trim();
     if (!content) return;
+
     const userMsg = { id: Date.now().toString(), role: 'user', content, timestamp: new Date().toISOString() };
-    setMessages(m => [...m, userMsg]);
+    const newHistory = [...messages, userMsg];
+
+    setMessages(newHistory);
     setInput('');
     setLoading(true);
-    setTimeout(() => {
-      const aiMsg = { id: (Date.now() + 1).toString(), role: 'assistant', content: getResponse(content), timestamp: new Date().toISOString() };
-      setMessages(m => [...m, aiMsg]);
-      setLoading(false);
-    }, 1200);
+
+    const contextData = {
+      user: currentUser,
+      camels: mockCamels,
+      pins: communityPins,
+      alerts: mockAlerts,
+      weather: mockWeather
+    };
+
+    const replyText = await callGeminiAPI(newHistory, contextData);
+
+    const aiMsg = { id: (Date.now() + 1).toString(), role: 'assistant', content: replyText, timestamp: new Date().toISOString() };
+    setMessages(m => [...m, aiMsg]);
+    setLoading(false);
   };
 
   const renderMessage = ({ item }) => {
@@ -74,8 +121,8 @@ export function ChatScreen({ navigation }) {
       <View style={{ alignItems: isUser ? 'flex-end' : 'flex-start', marginBottom: Spacing[3] }}>
         {!isUser && (
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-            <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: Colors.accentMuted, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.accentBorder }}>
-              <Ionicons name="sparkles" size={12} color={Colors.accent} />
+            <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: Colors.accentMuted, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.accentBorder, overflow: 'hidden' }}>
+              <Image source={require('../../../assets/redat_ai.png')} style={{ width: 16, height: 16, tintColor: Colors.accent }} resizeMode="contain" />
             </View>
             <Text variant="caption" color={Colors.accent}>REDAT AI</Text>
           </View>
@@ -108,8 +155,8 @@ export function ChatScreen({ navigation }) {
         <Pressable onPress={() => navigation.goBack()} accessibilityRole="button" accessibilityLabel="Back">
           <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
         </Pressable>
-        <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: Colors.accentMuted, borderWidth: 1, borderColor: Colors.accentBorder, alignItems: 'center', justifyContent: 'center' }}>
-          <Ionicons name="sparkles" size={20} color={Colors.accent} />
+        <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: Colors.accentMuted, borderWidth: 1, borderColor: Colors.accentBorder, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+          <Image source={require('../../../assets/redat_ai.png')} style={{ width: 26, height: 26, tintColor: Colors.accent }} resizeMode="contain" />
         </View>
         <View style={{ flex: 1 }}>
           <Text variant="titleMedium">REDAT AI</Text>
@@ -160,8 +207,8 @@ export function ChatScreen({ navigation }) {
             loading ? (
               <View style={{ alignItems: 'flex-start', marginBottom: Spacing[3] }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-                  <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: Colors.accentMuted, alignItems: 'center', justifyContent: 'center' }}>
-                    <Ionicons name="sparkles" size={12} color={Colors.accent} />
+                  <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: Colors.accentMuted, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                    <Image source={require('../../../assets/redat_ai.png')} style={{ width: 16, height: 16, tintColor: Colors.accent }} resizeMode="contain" />
                   </View>
                   <Text variant="caption" color={Colors.accent}>REDAT AI is thinking...</Text>
                 </View>
@@ -178,11 +225,11 @@ export function ChatScreen({ navigation }) {
 
         {/* Input bar */}
         <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: Spacing[2], padding: Spacing[3], borderTopWidth: 1, borderTopColor: Colors.border.muted, backgroundColor: Colors.bg.surface }}>
-          <Pressable 
+          <Pressable
             onPress={toggleRecording}
             disabled={processingAudio}
-            style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: recording ? Colors.error + '20' : processingAudio ? Colors.warning + '20' : Colors.bg.elevated, borderWidth: 1, borderColor: recording ? Colors.error : processingAudio ? Colors.warning : 'transparent', alignItems: 'center', justifyContent: 'center' }} 
-            accessibilityRole="button" 
+            style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: recording ? Colors.error + '20' : processingAudio ? Colors.warning + '20' : Colors.bg.elevated, borderWidth: 1, borderColor: recording ? Colors.error : processingAudio ? Colors.warning : 'transparent', alignItems: 'center', justifyContent: 'center' }}
+            accessibilityRole="button"
             accessibilityLabel="Record voice message"
           >
             <Ionicons name={recording ? 'stop-circle' : processingAudio ? 'hourglass-outline' : 'mic-outline'} size={20} color={recording ? Colors.error : processingAudio ? Colors.warning : Colors.text.secondary} />

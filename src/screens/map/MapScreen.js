@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
-import { View, Pressable, FlatList, Modal, StyleSheet } from 'react-native';
+import { View, Pressable, FlatList, Modal, StyleSheet, Platform, Linking, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Spacing, Radius } from '../../theme';
 import { Text, Card, Badge, Button } from '../../components/ui';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import { PIN_CONFIG } from '../../components/community/PinCard';
-import { mockCamels, mockFarm } from '../../data/mockData';
+import { mockCamels } from '../../data/mockData';
 import { useCommunityStore } from '../../store/useCommunityStore';
+import { useAuthStore } from '../../store/useAuthStore';
 
 // MapView requires native modules; show a rich placeholder for web/Expo Go
 export function MapScreen({ navigation }) {
   const pins = useCommunityStore(state => state.pins);
+  const currentUser = useAuthStore(state => state.currentUser);
   const [selectedPin, setSelectedPin] = useState(null);
   const [layer, setLayer]             = useState('all'); // 'all' | 'camels' | 'pins'
 
@@ -21,23 +23,42 @@ export function MapScreen({ navigation }) {
     { key: 'pins',   label: 'Pins',   icon: 'pin-outline' },
   ];
 
+  const handleNavigate = (pin) => {
+    if (!pin) return;
+    setSelectedPin(null);
+    const url = Platform.select({
+      ios: `maps:0,0?q=${pin.location.latitude},${pin.location.longitude}`,
+      android: `geo:0,0?q=${pin.location.latitude},${pin.location.longitude}(${pin.title})`
+    });
+    Linking.openURL(url).catch(() => Alert.alert('Navigate', 'No mapping app found.'));
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: Colors.bg.base }}>
       <MapView
         style={StyleSheet.absoluteFillObject}
         initialRegion={{
-          latitude: 23.505,
-          longitude: 55.808,
+          latitude: currentUser ? currentUser.location.latitude : 23.505,
+          longitude: currentUser ? currentUser.location.longitude : 55.808,
           latitudeDelta: 0.05,
           longitudeDelta: 0.05,
         }}
         mapType="satellite"
       >
+        {/* Home Address */}
+        {currentUser && (
+          <Marker coordinate={currentUser.location} title="Home (Farm)" description="Your Farm Address">
+            <View style={{ backgroundColor: Colors.info, borderRadius: Radius.full, width: 36, height: 36, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: Colors.white }}>
+              <Ionicons name="home" size={20} color={Colors.white} />
+            </View>
+          </Marker>
+        )}
+
         {/* Camel Markers */}
-        {(layer === 'all' || layer === 'camels') && mockCamels.filter(c => c.collarId).map((c, i) => (
+        {(layer === 'all' || layer === 'camels') && currentUser && mockCamels.filter(c => c.collarId).map((c, i) => (
           <Marker
             key={c.id}
-            coordinate={{ latitude: mockFarm.location.latitude + (i * 0.002), longitude: mockFarm.location.longitude + (i * 0.002) }}
+            coordinate={{ latitude: currentUser.location.latitude + (i * 0.002), longitude: currentUser.location.longitude + (i * 0.002) }}
             onPress={() => navigation.navigate('CamelDetail', { camelId: c.id })}
           >
             <View style={{ alignItems: 'center' }}>
@@ -112,14 +133,14 @@ export function MapScreen({ navigation }) {
                       </View>
                       <View style={{ flex: 1 }}>
                         <Text variant="titleMedium">{selectedPin.title}</Text>
-                        <Text variant="caption" color={Colors.text.tertiary}>by {selectedPin.authorName}</Text>
+                        <Text variant="caption" color={Colors.text.tertiary}>by {currentUser ? currentUser.name : selectedPin.authorName}</Text>
                       </View>
                       {selectedPin.isVerified && <Ionicons name="checkmark-circle" size={18} color={Colors.success} />}
                     </View>
                     <Text variant="bodySmall" color={Colors.text.secondary}>{selectedPin.description}</Text>
                     <View style={{ flexDirection: 'row', gap: Spacing[3], marginTop: Spacing[4] }}>
                       <Button label="View Details" variant="outline" size="sm" style={{ flex: 1 }} onPress={() => { setSelectedPin(null); navigation.navigate('PinDetail', { pinId: selectedPin.id }); }} />
-                      <Button label="Navigate"     variant="primary" size="sm" style={{ flex: 1 }} onPress={() => setSelectedPin(null)} />
+                      <Button label="Navigate"     variant="primary" size="sm" style={{ flex: 1 }} onPress={() => handleNavigate(selectedPin)} />
                     </View>
                   </>
                 )}

@@ -18,7 +18,7 @@ export function CamelCard({ camel, onPress }) {
           {/* Avatar */}
           <View style={{ width: 56, height: 56, borderRadius: Radius.lg, backgroundColor: Colors.bg.elevated, overflow: 'hidden', borderWidth: 1, borderColor: Colors.border.accent, alignItems: 'center', justifyContent: 'center' }}>
             {camel.photo
-              ? <Image source={{ uri: camel.photo }} style={{ width: 56, height: 56 }} />
+              ? <Image source={{ uri: camel.photo }} style={{ width: '100%', height: '100%', resizeMode: 'contain' }} />
               : <Text variant="headlineMedium">🐪</Text>}
           </View>
 
@@ -33,12 +33,6 @@ export function CamelCard({ camel, onPress }) {
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing[2], marginTop: 2 }}>
               <HealthStatusBadge status={camel.healthStatus} size="sm" />
-              {camel.collarId && (
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
-                  <Ionicons name="radio-outline" size={11} color={Colors.success} />
-                  <Text variant="caption" color={Colors.success}>LIVE</Text>
-                </View>
-              )}
             </View>
           </View>
 

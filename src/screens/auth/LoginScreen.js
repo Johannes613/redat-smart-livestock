@@ -5,6 +5,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Spacing, Radius } from '../../theme';
 import { Text, Button, Input, Card } from '../../components/ui';
+import { useAuthStore } from '../../store/useAuthStore';
+import { Alert } from 'react-native';
 
 export function LoginScreen({ navigation }) {
   const [email,    setEmail]    = useState('');
@@ -12,12 +14,19 @@ export function LoginScreen({ navigation }) {
   const [showPass, setShowPass] = useState(false);
   const [loading,  setLoading]  = useState(false);
 
+  const login = useAuthStore(state => state.login);
+
   const handleLogin = async () => {
+    if (!email || !password) return;
     setLoading(true);
-    setTimeout(() => {
+    try {
+      login(email, password);
+      // Navigation is handled automatically by AppNavigator reacting to isAuthenticated
+    } catch (e) {
+      Alert.alert('Login Failed', e.message);
+    } finally {
       setLoading(false);
-      navigation.replace('MainTabs');
-    }, 1200);
+    }
   };
 
   return (
@@ -27,9 +36,9 @@ export function LoginScreen({ navigation }) {
         <ScrollView contentContainerStyle={{ flexGrow: 1, padding: Spacing[6] }} keyboardShouldPersistTaps="handled">
 
           {/* Logo */}
-          <View style={{ alignItems: 'center', marginTop: Spacing[10], marginBottom: Spacing[10] }}>
-            <View style={{ width: 80, height: 80, borderRadius: Radius.xxl, backgroundColor: Colors.accentMuted, borderWidth: 1, borderColor: Colors.accentBorder, alignItems: 'center', justifyContent: 'center', marginBottom: Spacing[4] }}>
-              <Text style={{ fontSize: 40 }}>🐪</Text>
+          <View style={{ alignItems: 'center', marginTop: Spacing[8], marginBottom: Spacing[10] }}>
+            <View style={{ width: 120, height: 120, borderRadius: Radius.xxl, backgroundColor: Colors.accentMuted, borderWidth: 1, borderColor: Colors.accentBorder, alignItems: 'center', justifyContent: 'center', marginBottom: Spacing[4], overflow: 'hidden', padding: Spacing[2] }}>
+              <Image source={require('../../../assets/redat_ai.png')} style={{ width: '100%', height: '100%', tintColor: Colors.accent }} resizeMode="contain" />
             </View>
             <Text variant="headlineLarge" color={Colors.accent} align="center">REDAT</Text>
             <Text variant="bodySmall" color={Colors.text.secondary} align="center" style={{ marginTop: 4 }}>
@@ -77,7 +86,7 @@ export function LoginScreen({ navigation }) {
           {/* Demo notice */}
           <View style={{ marginTop: Spacing[6], alignItems: 'center' }}>
             <Text variant="caption" color={Colors.text.tertiary} align="center">
-              Demo mode — tap Sign In to explore the app
+              Demo mode — use demo@farm.ae / password
             </Text>
           </View>
         </ScrollView>

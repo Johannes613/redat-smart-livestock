@@ -11,6 +11,7 @@ import { CamelsScreen }     from '../screens/camels/CamelsScreen';
 import { MapScreen }        from '../screens/map/MapScreen';
 import { CommunityScreen }  from '../screens/community/CommunityScreen';
 import { AlertsScreen }     from '../screens/alerts/AlertsScreen';
+import { useAlertStore }    from '../store/useAlertStore';
 
 const Tab = createBottomTabNavigator();
 
@@ -55,6 +56,7 @@ function MapTabButton({ children, onPress }) {
 
 export function TabNavigator() {
   const insets = useSafeAreaInsets();
+  const unreadAlertsCount = useAlertStore(state => state.alerts.filter(a => !a.isRead).length);
 
   return (
     <Tab.Navigator
@@ -85,7 +87,7 @@ export function TabNavigator() {
         options={{ tabBarIcon: ({ focused }) => <TabIcon name="people"        focused={focused} label="Community" /> }}
       />
       <Tab.Screen name="Alerts"    component={AlertsScreen}
-        options={{ tabBarIcon: ({ focused }) => <TabIcon name="notifications" focused={focused} label="Alerts" badge={3} /> }}
+        options={{ tabBarIcon: ({ focused }) => <TabIcon name="notifications" focused={focused} label="Alerts" badge={unreadAlertsCount} /> }}
       />
     </Tab.Navigator>
   );

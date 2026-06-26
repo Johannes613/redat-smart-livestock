@@ -5,8 +5,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { Colors, Spacing, Radius, FontFamily, FontSize } from '../../theme';
 import { Text, Card, Badge, Button } from '../../components/ui';
 import { PIN_CONFIG } from '../../components/community/PinCard';
-import { mockPins, mockUser } from '../../data/mockData';
+import { mockPins } from '../../data/mockData';
 import { useCommunityStore } from '../../store/useCommunityStore';
+import { useAuthStore } from '../../store/useAuthStore';
 
 function timeAgo(d) {
   const diff = (Date.now() - new Date(d).getTime()) / 1000;
@@ -20,16 +21,17 @@ export function PinDetailScreen({ route, navigation }) {
   const pin = useCommunityStore(state => state.pins.find(p => p.id === pinId));
   const addComment = useCommunityStore(state => state.addComment);
   const toggleLike = useCommunityStore(state => state.toggleLike);
+  const currentUser = useAuthStore(state => state.currentUser);
   const [comment, setComment] = useState('');
   if (!pin) return null;
 
   const cfg = PIN_CONFIG[pin.category];
 
-  const handleLike = () => toggleLike(pin.id, mockUser.id);
+  const handleLike = () => toggleLike(pin.id, currentUser.id);
 
   const handleComment = () => {
-    if (!comment.trim()) return;
-    const newComment = { id: Date.now().toString(), authorId: mockUser.id, authorName: mockUser.name, text: comment.trim(), createdAt: new Date().toISOString() };
+    if (!comment.trim() || !currentUser) return;
+    const newComment = { id: Date.now().toString(), authorId: currentUser.id, authorName: currentUser.name, text: comment.trim(), createdAt: new Date().toISOString() };
     addComment(pin.id, newComment);
     setComment('');
   };
@@ -120,7 +122,7 @@ export function PinDetailScreen({ route, navigation }) {
                 <Ionicons name="play" size={20} color={Colors.white} />
               </Pressable>
               <View style={{ flex: 1 }}>
-                <Text variant="labelMedium">Arabic Voice Note</Text>
+                <Text variant="labelMedium">Voice Note</Text>
                 <Text variant="caption" color={Colors.text.tertiary}>{pin.voiceTranscript ?? 'Tap to listen'}</Text>
               </View>
             </View>
@@ -150,11 +152,13 @@ export function PinDetailScreen({ route, navigation }) {
 
           {pin.comments.map(c => (
             <View key={c.id} style={{ paddingVertical: Spacing[3], borderTopWidth: 1, borderTopColor: Colors.border.muted, gap: 4 }}>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text variant="labelSmall" color={Colors.accent}>{c.authorName}</Text>
-                <Text variant="caption" color={Colors.text.tertiary}>{timeAgo(c.createdAt)}</Text>
-              </View>
-              <Text variant="bodySmall" color={Colors.text.secondary}>{c.text}</Text>
+                  <View style={{ flex: 1 }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
+                      <Text variant="labelSmall">{currentUser ? currentUser.name : c.authorName}</Text>
+                      <Text variant="caption" color={Colors.text.tertiary}>{timeAgo(c.createdAt)}</Text>
+                    </View>
+                    <Text variant="bodySmall" color={Colors.text.secondary}>{c.text}</Text>
+                  </View>
             </View>
           ))}
 

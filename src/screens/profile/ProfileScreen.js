@@ -3,9 +3,9 @@ import { View, ScrollView, Pressable, Switch } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing, Radius, isAppDark, toggleTheme } from '../../theme';
+import { Colors, Spacing, Radius, isAppDark, toggleTheme, subscribeTheme } from '../../theme';
 import { Text, Card, Badge, Button } from '../../components/ui';
-import { mockUser, mockFarm, mockAnalytics } from '../../data/mockData';
+import { useAuthStore } from '../../store/useAuthStore';
 
 const BADGES = [
   { icon: '🌊', label: 'Water Guardian',  desc: 'Posted 5 water sources' },
@@ -15,20 +15,16 @@ const BADGES = [
   { icon: '🔥', label: '7-Day Streak',    desc: 'Logged in 7 days' },
 ];
 
-const MENU_ITEMS = [
-  { icon: 'business-outline',  label: 'My Farms',         badge: '1' },
-  { icon: 'analytics-outline', label: 'Analytics',        badge: null },
-  { icon: 'document-text-outline', label: 'Reports',      badge: null },
-  { icon: 'people-outline',    label: 'Veterinarians',    badge: null },
-  { icon: 'language-outline',  label: 'Language',         badge: 'EN' },
-  { icon: 'moon-outline',      label: 'Dark Mode',        isToggle: true },
-  { icon: 'notifications-outline', label: 'Notifications', badge: '3' },
-  { icon: 'shield-checkmark-outline', label: 'Privacy',   badge: null },
-  { icon: 'help-circle-outline', label: 'Help & Support', badge: null },
-  { icon: 'log-out-outline',   label: 'Sign Out',         badge: null, danger: true },
-];
-
 export function ProfileScreen({ navigation }) {
+  const currentUser = useAuthStore(state => state.currentUser);
+  const logout = useAuthStore(state => state.logout);
+  const [darkTheme, setDarkTheme] = React.useState(isAppDark);
+
+  React.useEffect(() => {
+    return subscribeTheme(setDarkTheme);
+  }, []);
+
+  if (!currentUser) return null;
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.bg.base }} edges={['top']}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing[3], padding: Spacing[4] }}>
@@ -42,59 +38,46 @@ export function ProfileScreen({ navigation }) {
       </View>
 
       <ScrollView contentContainerStyle={{ gap: Spacing[4], paddingBottom: Spacing[10] }} showsVerticalScrollIndicator={false}>
-        {/* Profile hero */}
-        <View
-          style={{ margin: Spacing[4], borderRadius: Radius.xxl, padding: Spacing[5], borderWidth: 1, borderColor: Colors.accentBorder, backgroundColor: Colors.bg.card }}
-        >
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing[4] }}>
-            <View style={{ width: 72, height: 72, borderRadius: 36, backgroundColor: Colors.bg.elevated, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: Colors.accent }}>
-              <Text style={{ fontSize: 32 }}>👨‍🌾</Text>
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text variant="headlineSmall">{mockUser.name}</Text>
-              <Text variant="bodySmall" color={Colors.text.secondary}>{mockUser.nameAr}</Text>
-              <View style={{ flexDirection: 'row', gap: Spacing[2], marginTop: Spacing[2] }}>
-                <Badge label="Farmer" color={Colors.accent} size="sm" />
-                {mockUser.isVerified && <Badge label="✓ Verified" color={Colors.success} size="sm" />}
-              </View>
-            </View>
+        <View style={{ alignItems: 'center', marginVertical: Spacing[6] }}>
+          <View style={{ width: 100, height: 100, borderRadius: Radius.full, backgroundColor: Colors.bg.elevated, alignItems: 'center', justifyContent: 'center', marginBottom: Spacing[4], borderWidth: 2, borderColor: Colors.accent }}>
+            <Ionicons name="person" size={40} color={Colors.accent} />
           </View>
-
-          {/* Stats */}
-          <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: Spacing[4], paddingTop: Spacing[4], borderTopWidth: 1, borderTopColor: Colors.border.muted }}>
-            {[
-              { label: 'Camels', value: mockAnalytics.totalCamels },
-              { label: 'Pins',   value: mockAnalytics.communityPins },
-              { label: 'Score',  value: mockUser.contributionScore },
-              { label: 'Badges', value: mockUser.badgeCount },
-            ].map(s => (
-              <View key={s.label} style={{ alignItems: 'center' }}>
-                <Text variant="headlineSmall" color={Colors.accent}>{s.value}</Text>
-                <Text variant="caption" color={Colors.text.tertiary}>{s.label}</Text>
-              </View>
-            ))}
-          </View>
+          <Text variant="headlineSmall">{currentUser.name}</Text>
+          <Text variant="bodyMedium" color={Colors.text.secondary}>{currentUser.farmName}</Text>
         </View>
 
-        {/* Farm info */}
         <View style={{ paddingHorizontal: Spacing[4] }}>
-          <Text variant="overline" color={Colors.text.tertiary} style={{ marginBottom: Spacing[3] }}>FARM</Text>
+          <Text variant="overline" color={Colors.text.tertiary} style={{ marginBottom: Spacing[3] }}>ACCOUNT DETAILS</Text>
           <Card variant="default">
-            <View style={{ flexDirection: 'row', gap: Spacing[3], alignItems: 'center' }}>
-              <View style={{ width: 48, height: 48, borderRadius: Radius.lg, backgroundColor: Colors.successMuted, alignItems: 'center', justifyContent: 'center' }}>
-                <Ionicons name="business-outline" size={22} color={Colors.success} />
+            {[
+              { label: 'Email', value: currentUser.email },
+              { label: 'Phone', value: currentUser.phone },
+            ].map((row, i) => (
+              <View key={i} style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: Spacing[3], borderTopWidth: i === 0 ? 0 : 1, borderTopColor: Colors.border.muted }}>
+                <Text variant="bodySmall" color={Colors.text.secondary}>{row.label}</Text>
+                <Text variant="bodyMedium">{row.value}</Text>
               </View>
-              <View style={{ flex: 1 }}>
-                <Text variant="titleSmall">{mockFarm.name}</Text>
-                <Text variant="bodySmall" color={Colors.text.secondary}>{mockFarm.address}</Text>
-                <Text variant="caption" color={Colors.text.tertiary}>{mockFarm.area} km² · {mockFarm.camelIds.length} camels</Text>
+            ))}
+          </Card>
+        </View>
+
+        <View style={{ paddingHorizontal: Spacing[4] }}>
+          <Text variant="overline" color={Colors.text.tertiary} style={{ marginBottom: Spacing[3] }}>PREFERENCES</Text>
+          <Card variant="default">
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: Spacing[2] }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing[3] }}>
+                <Ionicons name="moon-outline" size={20} color={Colors.text.primary} />
+                <Text variant="bodyMedium">Dark Mode</Text>
               </View>
-              <Ionicons name="chevron-forward" size={18} color={Colors.text.tertiary} />
+              <Switch 
+                value={darkTheme} 
+                onValueChange={toggleTheme} 
+                trackColor={{ false: Colors.border.default, true: Colors.accent }}
+              />
             </View>
           </Card>
         </View>
 
-        {/* Badges */}
         <View style={{ paddingHorizontal: Spacing[4] }}>
           <Text variant="overline" color={Colors.text.tertiary} style={{ marginBottom: Spacing[3] }}>EARNED BADGES</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: Spacing[3] }}>
@@ -108,27 +91,12 @@ export function ProfileScreen({ navigation }) {
           </ScrollView>
         </View>
 
-        {/* Menu */}
-        <View style={{ paddingHorizontal: Spacing[4] }}>
-          <Card variant="default" padding={0}>
-            {MENU_ITEMS.map((item, i) => (
-              <Pressable
-                key={item.label}
-                accessibilityRole="button"
-                accessibilityLabel={item.label}
-                style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing[3], padding: Spacing[4], borderTopWidth: i === 0 ? 0 : 1, borderTopColor: Colors.border.muted }}
-              >
-                <Ionicons name={item.icon} size={20} color={item.danger ? Colors.error : Colors.text.secondary} />
-                <Text variant="bodyMedium" color={item.danger ? Colors.error : Colors.text.primary} style={{ flex: 1 }}>{item.label}</Text>
-                {item.badge && <Badge label={item.badge} color={item.danger ? Colors.error : Colors.accent} size="sm" />}
-                {item.isToggle ? (
-                  <Switch value={isAppDark} onValueChange={toggleTheme} trackColor={{ true: Colors.accent }} />
-                ) : !item.danger ? (
-                  <Ionicons name="chevron-forward" size={16} color={Colors.text.tertiary} />
-                ) : null}
-              </Pressable>
-            ))}
-          </Card>
+        <View style={{ padding: Spacing[4] }}>
+          <Button 
+            label="Sign Out" 
+            variant="outline" 
+            onPress={logout}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>

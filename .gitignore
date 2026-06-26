@@ -39,3 +39,10 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Python & Secrets
+.env
+__pycache__/
+venv/
+.venv/
+ai_model_layer/venv/

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ScrollView, Pressable } from 'react-native';
+import { View, ScrollView, Pressable, Alert, Linking, Platform, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Ionicons } from '@expo/vector-icons';
@@ -8,15 +8,56 @@ import { Text, Card, Badge, Button, ProgressRing } from '../../components/ui';
 import { HealthStatusBadge } from '../../components/camel/HealthStatusBadge';
 import { CollarWidget } from '../../components/camel/CollarWidget';
 import { mockCamels, mockCollarReading, mockAlerts } from '../../data/mockData';
+import { useAuthStore } from '../../store/useAuthStore';
 
 const TABS = ['Overview', 'Health', 'Location', 'History'];
+
+function getDistanceKm(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Radius of the earth in km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = 0.5 - Math.cos(dLat)/2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * (1 - Math.cos(dLon))/2;
+  return (R * 2 * Math.asin(Math.sqrt(a))).toFixed(2);
+}
 
 export function CamelDetailScreen({ route, navigation }) {
   const { camelId } = route.params;
   const camel = mockCamels.find(c => c.id === camelId) ?? mockCamels[0];
   const [tab, setTab] = useState('Overview');
+  const [historyRecords, setHistoryRecords] = useState([]);
+
+  const currentUser = useAuthStore(state => state.currentUser);
+  if (!currentUser) return null;
 
   const camelAlerts = mockAlerts.filter(a => a.camelId === camel.id);
+  const index = mockCamels.findIndex(c => c.id === camelId);
+  const camelLat = currentUser.location.latitude + (index * 0.002);
+  const camelLon = currentUser.location.longitude + (index * 0.002);
+  const distance = getDistanceKm(currentUser.location.latitude, currentUser.location.longitude, camelLat, camelLon);
+
+  const handleCallVet = () => {
+    Linking.openURL('tel:123456789').catch(() => Alert.alert('Call Vet', 'Phone dialer not available.'));
+  };
+
+  const handleRecordVisit = () => {
+    Alert.prompt('Record Visit', 'Enter visit notes:', (notes) => {
+      if (notes) {
+        setHistoryRecords(prev => [
+          { id: Date.now().toString(), notes, date: new Date().toLocaleDateString() }, 
+          ...prev
+        ]);
+        Alert.alert('Success', 'Visit recorded successfully.');
+      }
+    });
+  };
+
+  const handleNavigateToCamel = () => {
+    const url = Platform.select({
+      ios: `maps:0,0?q=${camelLat},${camelLon}`,
+      android: `geo:0,0?q=${camelLat},${camelLon}(${camel.name})`
+    });
+    Linking.openURL(url).catch(() => Alert.alert('Navigate', 'No mapping app found.'));
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.bg.base }} edges={['top']}>
@@ -37,8 +78,12 @@ export function CamelDetailScreen({ route, navigation }) {
           style={{ margin: Spacing[4], borderRadius: Radius.xxl, padding: Spacing[5], borderWidth: 1, borderColor: Colors.accentBorder, backgroundColor: Colors.bg.card }}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing[4] }}>
-            <View style={{ width: 80, height: 80, borderRadius: Radius.xxl, backgroundColor: Colors.bg.elevated, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.accentBorder }}>
-              <Text style={{ fontSize: 44 }}>🐪</Text>
+            <View style={{ width: 80, height: 80, borderRadius: Radius.xxl, backgroundColor: Colors.bg.elevated, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.accentBorder, overflow: 'hidden' }}>
+              {camel.photo ? (
+                <Image source={{ uri: camel.photo }} style={{ width: '100%', height: '100%', resizeMode: 'contain' }} />
+              ) : (
+                <Text style={{ fontSize: 44 }}>🐪</Text>
+              )}
             </View>
             <View style={{ flex: 1, gap: Spacing[1] }}>
               <Text variant="headlineSmall">{camel.name}</Text>
@@ -46,8 +91,8 @@ export function CamelDetailScreen({ route, navigation }) {
               <HealthStatusBadge status={camel.healthStatus} />
               {camel.collarId && (
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                  <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: Colors.success }} />
-                  <Text variant="caption" color={Colors.success}>Collar LIVE</Text>
+                  <Ionicons name="location" size={12} color={Colors.info} />
+                  <Text variant="caption" color={Colors.info}>{distance} km from Home</Text>
                 </View>
               )}
             </View>
@@ -73,7 +118,7 @@ export function CamelDetailScreen({ route, navigation }) {
         {/* Live collar widget */}
         {camel.collarId && (
           <View style={{ paddingHorizontal: Spacing[4], marginBottom: Spacing[4] }}>
-            <CollarWidget reading={mockCollarReading} />
+            <CollarWidget reading={mockCollarReading} distance={distance} />
           </View>
         )}
 
@@ -128,8 +173,8 @@ export function CamelDetailScreen({ route, navigation }) {
 
               {/* Actions */}
               <View style={{ flexDirection: 'row', gap: Spacing[3] }}>
-                <Button label="Record Visit" variant="outline" size="sm" style={{ flex: 1 }} icon={<Ionicons name="medkit-outline" size={15} color={Colors.accent} />} onPress={() => {}} />
-                <Button label="Call Vet"     variant="secondary" size="sm" style={{ flex: 1 }} icon={<Ionicons name="call-outline" size={15} color={Colors.text.primary} />} onPress={() => {}} />
+                <Button label="Record Visit" variant="outline" size="sm" style={{ flex: 1 }} icon={<Ionicons name="medkit-outline" size={15} color={Colors.accent} />} onPress={handleRecordVisit} />
+                <Button label="Call Vet"     variant="secondary" size="sm" style={{ flex: 1 }} icon={<Ionicons name="call-outline" size={15} color={Colors.text.primary} />} onPress={handleCallVet} />
               </View>
             </>
           )}
@@ -166,27 +211,64 @@ export function CamelDetailScreen({ route, navigation }) {
           )}
 
           {tab === 'Location' && (
-            <Card variant="default" style={{ alignItems: 'center', padding: Spacing[8], gap: Spacing[3] }}>
+            <Card variant="default" style={{ alignItems: 'center', padding: Spacing[6], gap: Spacing[3] }}>
               <Ionicons name="map-outline" size={48} color={Colors.accent} />
               <Text variant="titleMedium">GPS Tracking</Text>
-              <Text variant="bodySmall" color={Colors.text.secondary} align="center">
-                {camel.collarId
-                  ? `Last GPS: 23.502°N, 55.803°E\nUpdated: just now`
-                  : 'No collar attached. Attach a smart collar to enable GPS tracking.'}
-              </Text>
-              {camel.lastLocation && (
-                <Badge label={`${camel.lastLocation.latitude.toFixed(4)}, ${camel.lastLocation.longitude.toFixed(4)}`} color={Colors.info} />
+              
+              {camel.collarId ? (
+                <>
+                  <Text variant="bodySmall" color={Colors.text.secondary} align="center">
+                    Current Location: {camelLat.toFixed(4)}°N, {camelLon.toFixed(4)}°E
+                  </Text>
+                  
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: Colors.info + '20', paddingHorizontal: 12, paddingVertical: 6, borderRadius: Radius.full, marginVertical: Spacing[2] }}>
+                    <Ionicons name="home-outline" size={16} color={Colors.info} />
+                    <Text variant="labelSmall" color={Colors.info}>{distance} km from Home</Text>
+                  </View>
+                  
+                  <Button 
+                    label="Navigate to Camel" 
+                    variant="primary" 
+                    icon={<Ionicons name="navigate-outline" size={16} color={Colors.white} />}
+                    onPress={handleNavigateToCamel}
+                    style={{ marginTop: Spacing[2], width: '100%' }}
+                  />
+                </>
+              ) : (
+                <Text variant="bodySmall" color={Colors.text.secondary} align="center">
+                  No collar attached. Attach a smart collar to enable GPS tracking.
+                </Text>
               )}
             </Card>
           )}
 
           {tab === 'History' && (
-            <Card variant="default" style={{ alignItems: 'center', padding: Spacing[8], gap: Spacing[3] }}>
-              <Ionicons name="time-outline" size={48} color={Colors.text.tertiary} />
-              <Text variant="titleMedium" color={Colors.text.secondary}>Medical History</Text>
-              <Text variant="bodySmall" color={Colors.text.tertiary} align="center">No records yet. Add a health record after the next vet visit.</Text>
-              <Button label="Add Record" variant="outline" size="sm" onPress={() => {}} />
-            </Card>
+            <View style={{ gap: Spacing[3] }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingBottom: Spacing[2] }}>
+                <Text variant="overline" color={Colors.text.tertiary}>MEDICAL HISTORY</Text>
+                <Button label="Add Record" variant="outline" size="sm" onPress={handleRecordVisit} />
+              </View>
+              {historyRecords.length === 0 ? (
+                <Card variant="default" style={{ alignItems: 'center', padding: Spacing[8], gap: Spacing[3] }}>
+                  <Ionicons name="time-outline" size={48} color={Colors.text.tertiary} />
+                  <Text variant="titleMedium" color={Colors.text.secondary}>No Records</Text>
+                  <Text variant="bodySmall" color={Colors.text.tertiary} align="center">Add a health record after the next vet visit.</Text>
+                </Card>
+              ) : (
+                historyRecords.map(record => (
+                  <Card key={record.id} variant="default" padding={Spacing[4]}>
+                    <View style={{ flexDirection: 'row', gap: Spacing[3] }}>
+                      <Ionicons name="medkit" size={24} color={Colors.accent} />
+                      <View style={{ flex: 1 }}>
+                        <Text variant="titleSmall">Vet Visit</Text>
+                        <Text variant="bodyMedium" color={Colors.text.secondary} style={{ marginTop: 4 }}>{record.notes}</Text>
+                        <Text variant="caption" color={Colors.text.tertiary} style={{ marginTop: 8 }}>{record.date}</Text>
+                      </View>
+                    </View>
+                  </Card>
+                ))
+              )}
+            </View>
           )}
         </View>
       </ScrollView>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ScrollView, Pressable, RefreshControl } from 'react-native';
+import { View, ScrollView, Pressable, RefreshControl, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Ionicons } from '@expo/vector-icons';
@@ -9,20 +9,24 @@ import { StatCard }    from '../../components/dashboard/StatCard';
 import { AlertBanner } from '../../components/dashboard/AlertBanner';
 import { CamelCard }   from '../../components/camel/CamelCard';
 import {
-  mockUser, mockFarm, mockCamels,
-  mockAlerts, mockWeather, mockAnalytics,
+  mockCamels, mockAlerts, mockWeather, mockAnalytics,
 } from '../../data/mockData';
+import { useAuthStore } from '../../store/useAuthStore';
+import { useAlertStore } from '../../store/useAlertStore';
 
 export function DashboardScreen({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
-  const [alerts, setAlerts]         = useState(mockAlerts);
+  const alerts = useAlertStore(state => state.alerts);
+  const currentUser = useAuthStore(state => state.currentUser);
+
+  if (!currentUser) return null;
 
   const onRefresh = () => {
     setRefreshing(true);
     setTimeout(() => setRefreshing(false), 1200);
   };
 
-  const dismissAlert = (id) => setAlerts(a => a.filter(x => x.id !== id));
+  const dismissAlert = useAlertStore(state => state.dismissAlert);
 
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
@@ -38,8 +42,8 @@ export function DashboardScreen({ navigation }) {
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <View>
             <Text variant="bodySmall" color={Colors.text.tertiary}>{greeting}</Text>
-            <Text variant="headlineSmall">{mockUser.name.split(' ')[0]} 👋</Text>
-            <Text variant="caption" color={Colors.text.secondary}>{mockFarm.name}</Text>
+            <Text variant="headlineSmall">{currentUser.name.split(' ')[0]} 👋</Text>
+            <Text variant="caption" color={Colors.text.secondary}>{currentUser.farmName}</Text>
           </View>
           <View style={{ flexDirection: 'row', gap: Spacing[3] }}>
             <Pressable
@@ -48,7 +52,6 @@ export function DashboardScreen({ navigation }) {
               accessibilityRole="button" accessibilityLabel="Notifications"
             >
               <Ionicons name="notifications-outline" size={20} color={Colors.text.primary} />
-              <View style={{ position: 'absolute', top: 8, right: 8, width: 8, height: 8, borderRadius: 4, backgroundColor: Colors.error }} />
             </Pressable>
             <Pressable
               onPress={() => navigation.navigate('Profile')}
@@ -82,37 +85,22 @@ export function DashboardScreen({ navigation }) {
         <View>
           <Text variant="overline" color={Colors.text.tertiary} style={{ marginBottom: Spacing[3] }}>TODAY'S STATUS</Text>
           <View style={{ flexDirection: 'row', gap: Spacing[3] }}>
-            <StatCard label="Healthy"     value={mockAnalytics.healthyCount}    icon="checkmark-circle-outline" color={Colors.success} trend={{ value: 0, direction: 'neutral' }} />
-            <StatCard label="Sick"        value={mockAnalytics.sickCount}       icon="medical-outline"          color={Colors.error}   trend={{ value: 1, direction: 'up' }} />
+            <StatCard label="Healthy"     value={mockAnalytics.healthyCount}    icon="checkmark-circle-outline" color={Colors.success} />
+            <StatCard label="Sick"        value={mockAnalytics.sickCount}       icon="medical-outline"          color={Colors.error} />
           </View>
           <View style={{ flexDirection: 'row', gap: Spacing[3], marginTop: Spacing[3] }}>
             <StatCard label="Pregnant"    value={mockAnalytics.pregnantCount}   icon="heart-outline"            color={Colors.health.pregnant} />
-            <StatCard label="Heat Stress" value={mockAnalytics.heatStressCount} icon="thermometer-outline"      color={Colors.health.heatStress} trend={{ value: 1, direction: 'up' }} />
+            <StatCard label="Heat Stress" value={mockAnalytics.heatStressCount} icon="thermometer-outline"      color={Colors.health.heatStress} />
           </View>
         </View>
 
-        {/* Regional Alert */}
-        {alerts.filter(a => a.type === 'regional_alert' && !a.isRead).length > 0 && (
-          <View style={{ backgroundColor: Colors.error + '15', borderColor: Colors.error + '40', borderWidth: 1, borderRadius: Radius.lg, padding: Spacing[4] }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing[2], marginBottom: Spacing[2] }}>
-              <Ionicons name="warning" size={20} color={Colors.error} />
-              <Text variant="titleMedium" color={Colors.error}>⚠ Regional Alert</Text>
-            </View>
-            <Text variant="bodyMedium" color={Colors.text.primary} style={{ marginBottom: Spacing[1] }}>
-              {alerts.find(a => a.type === 'regional_alert').message}
-            </Text>
-            <Text variant="caption" color={Colors.text.secondary}>
-              {alerts.find(a => a.type === 'regional_alert').recommendation}
-            </Text>
-          </View>
-        )}
 
         {/* Active alerts */}
         {alerts.filter(a => !a.isRead && a.type !== 'regional_alert').length > 0 && (
           <View>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing[3] }}>
               <Text variant="overline" color={Colors.text.tertiary}>HERD ALERTS</Text>
-              <Badge label={`${alerts.filter(a => !a.isRead && a.type !== 'regional_alert').length} new`} color={Colors.error} size="sm" />
+              <Badge label={`${alerts.filter(a => !a.isRead && a.type !== 'regional_alert').length} new`} color={Colors.white} size="sm" />
             </View>
             <View style={{ gap: Spacing[2] }}>
               {alerts.filter(a => !a.isRead && a.type !== 'regional_alert').map(alert => (
@@ -169,8 +157,8 @@ export function DashboardScreen({ navigation }) {
         {/* AI summary */}
         <Card variant="accent" padding={Spacing[4]}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing[3], marginBottom: Spacing[3] }}>
-            <View style={{ width: 36, height: 36, borderRadius: Radius.lg, backgroundColor: Colors.accentMuted, alignItems: 'center', justifyContent: 'center' }}>
-              <Ionicons name="sparkles-outline" size={18} color={Colors.accent} />
+            <View style={{ width: 36, height: 36, borderRadius: Radius.lg, backgroundColor: Colors.accentMuted, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+              <Image source={require('../../../assets/redat_ai.png')} style={{ width: 24, height: 24, tintColor: Colors.accent }} resizeMode="contain" />
             </View>
             <View>
               <Text variant="titleSmall" color={Colors.accent}>AI Daily Summary</Text>
