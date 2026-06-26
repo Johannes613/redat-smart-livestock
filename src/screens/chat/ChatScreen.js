@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { View, FlatList, Pressable, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
+
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Spacing, Radius, FontFamily, FontSize } from '../../theme';
 import { Text, Card, Badge } from '../../components/ui';
@@ -36,7 +36,23 @@ export function ChatScreen({ navigation }) {
   const [messages, setMessages] = useState(mockChatHistory);
   const [input, setInput]       = useState('');
   const [loading, setLoading]   = useState(false);
+  const [recording, setRecording] = useState(false);
+  const [processingAudio, setProcessingAudio] = useState(false);
   const listRef = useRef(null);
+
+  const toggleRecording = () => {
+    if (recording) {
+      setRecording(false);
+      setProcessingAudio(true);
+      // Simulate AI Transcription (Whisper/Gemini)
+      setTimeout(() => {
+        setProcessingAudio(false);
+        setInput("Where is the nearest water source?");
+      }, 1500);
+    } else {
+      setRecording(true);
+    }
+  };
 
   const sendMessage = (text) => {
     const content = (text ?? input).trim();
@@ -115,14 +131,14 @@ export function ChatScreen({ navigation }) {
           ListHeaderComponent={() => (
             <View style={{ gap: Spacing[4], marginBottom: Spacing[4] }}>
               {/* Intro card */}
-              <LinearGradient colors={[Colors.accentMuted, 'transparent']} style={{ borderRadius: Radius.xl, padding: Spacing[4], borderWidth: 1, borderColor: Colors.accentBorder }}>
+              <View style={{ backgroundColor: Colors.bg.card, borderRadius: Radius.xl, padding: Spacing[4], borderWidth: 1, borderColor: Colors.accentBorder }}>
                 <Text variant="titleSmall" color={Colors.accent} style={{ marginBottom: 4 }}>
                   Welcome to REDAT AI 🐪
                 </Text>
                 <Text variant="bodySmall" color={Colors.text.secondary}>
                   I have access to your farm data, community pins, weather, and regional disease reports. Ask me anything in Arabic or English.
                 </Text>
-              </LinearGradient>
+              </View>
 
               {/* Quick questions */}
               <View>
@@ -162,8 +178,14 @@ export function ChatScreen({ navigation }) {
 
         {/* Input bar */}
         <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: Spacing[2], padding: Spacing[3], borderTopWidth: 1, borderTopColor: Colors.border.muted, backgroundColor: Colors.bg.surface }}>
-          <Pressable style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: Colors.bg.elevated, alignItems: 'center', justifyContent: 'center' }} accessibilityRole="button" accessibilityLabel="Record voice message">
-            <Ionicons name="mic-outline" size={20} color={Colors.text.secondary} />
+          <Pressable 
+            onPress={toggleRecording}
+            disabled={processingAudio}
+            style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: recording ? Colors.error + '20' : processingAudio ? Colors.warning + '20' : Colors.bg.elevated, borderWidth: 1, borderColor: recording ? Colors.error : processingAudio ? Colors.warning : 'transparent', alignItems: 'center', justifyContent: 'center' }} 
+            accessibilityRole="button" 
+            accessibilityLabel="Record voice message"
+          >
+            <Ionicons name={recording ? 'stop-circle' : processingAudio ? 'hourglass-outline' : 'mic-outline'} size={20} color={recording ? Colors.error : processingAudio ? Colors.warning : Colors.text.secondary} />
           </Pressable>
           <TextInput
             style={{ flex: 1, minHeight: 40, maxHeight: 120, backgroundColor: Colors.bg.elevated, borderRadius: Radius.xl, borderWidth: 1, borderColor: Colors.border.default, paddingHorizontal: 14, paddingVertical: 10, fontFamily: FontFamily.mono, fontSize: FontSize.base, color: Colors.text.primary }}

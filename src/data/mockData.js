@@ -50,6 +50,7 @@ export const mockCollarReading = {
 };
 
 export const mockAlerts = [
+  { id: 'a0', camelId: null, camelName: 'Community', farmId: 'regional', type: 'regional_alert', severity: 'high', confidence: 0.95, message: '6 abnormal health events reported within 15 km.', recommendation: 'Vaccinate herd against camel pox and monitor water sources.', createdAt: new Date(Date.now() - 1800000).toISOString(), isRead: false },
   { id: 'a1', camelId: 'c5', camelName: 'Safa',  farmId: 'f1', type: 'illness',     severity: 'high',     confidence: 0.89, message: 'Safa shows signs of respiratory illness. Temperature elevated at 40.2°C.',   recommendation: 'Contact veterinarian immediately.', createdAt: new Date(Date.now() - 3600000).toISOString(),  isRead: false },
   { id: 'a2', camelId: 'c3', camelName: 'Noor',  farmId: 'f1', type: 'heat_stress', severity: 'medium',   confidence: 0.76, message: 'Noor exhibiting reduced activity in peak heat hours. Heat stress detected.', recommendation: 'Move to shaded area and increase water access.', createdAt: new Date(Date.now() - 7200000).toISOString(),  isRead: false },
   { id: 'a3', camelId: 'c2', camelName: 'Layla', farmId: 'f1', type: 'pregnancy_risk', severity: 'low',   confidence: 0.62, message: 'Layla is in week 9 of pregnancy. Movement patterns slightly irregular.',     recommendation: 'Increase monitoring frequency.', createdAt: new Date(Date.now() - 86400000).toISOString(), isRead: true  },

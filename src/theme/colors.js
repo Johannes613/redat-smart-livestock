@@ -1,37 +1,14 @@
-export const Colors = {
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useColorScheme } from 'react-native';
+
+const sharedColors = {
   // Brand
   accent:       '#8100D1',
   accentHover:  '#6a00ad',
   accentLight:  '#9B1FE8',
-  accentMuted:  'rgba(129,0,209,0.12)',
-  accentBorder: 'rgba(129,0,209,0.25)',
-  accentGlow:   'rgba(129,0,209,0.4)',
-
-  // Backgrounds
-  bg: {
-    base:     '#0A0A14',
-    surface:  '#111120',
-    card:     '#181828',
-    elevated: '#21213A',
-    overlay:  'rgba(10,10,20,0.85)',
-  },
-
-  // Text
-  text: {
-    primary:   '#F0F0FF',
-    secondary: '#9898B8',
-    tertiary:  '#55557A',
-    inverse:   '#0A0A14',
-    accent:    '#C060FF',
-  },
-
-  // Borders
-  border: {
-    default: '#2A2A42',
-    muted:   '#1A1A2E',
-    accent:  'rgba(129,0,209,0.3)',
-    focus:   '#8100D1',
-  },
+  accentMuted:  'rgba(129,0,209,0.1)',
+  accentBorder: 'rgba(129,0,209,0.2)',
+  accentGlow:   'transparent',
 
   // Semantic
   success:      '#22C55E',
@@ -67,11 +44,77 @@ export const Colors = {
     general:   '#6B7280',
   },
 
-  // Glass
-  glass:       'rgba(129,0,209,0.07)',
-  glassBorder: 'rgba(129,0,209,0.18)',
-
   white:       '#FFFFFF',
   black:       '#000000',
   transparent: 'transparent',
 };
+
+export const DarkColors = {
+  ...sharedColors,
+  isDark: true,
+  bg: {
+    base:     '#000000',
+    surface:  '#121212',
+    card:     '#1C1C1E',
+    elevated: '#2C2C2E',
+    overlay:  'rgba(0,0,0,0.8)',
+  },
+  text: {
+    primary:   '#FFFFFF',
+    secondary: '#EBEBF5',
+    tertiary:  'rgba(235,235,245,0.6)',
+    inverse:   '#000000',
+    accent:    '#D180FF',
+  },
+  border: {
+    default: '#38383A',
+    muted:   '#2C2C2E',
+    accent:  'rgba(129,0,209,0.3)',
+    focus:   '#8100D1',
+  },
+  glass:       'rgba(129,0,209,0.07)',
+  glassBorder: 'rgba(129,0,209,0.18)',
+};
+
+export const LightColors = {
+  ...sharedColors,
+  isDark: false,
+  bg: {
+    base:     '#F2F2F7',
+    surface:  '#E5E5EA',
+    card:     '#FFFFFF',
+    elevated: '#FFFFFF',
+    overlay:  'rgba(0,0,0,0.4)',
+  },
+  text: {
+    primary:   '#000000',
+    secondary: '#3C3C43',
+    tertiary:  'rgba(60,60,67,0.6)',
+    inverse:   '#FFFFFF',
+    accent:    '#8100D1',
+  },
+  border: {
+    default: '#D1D1D6',
+    muted:   '#E5E5EA',
+    accent:  'rgba(129,0,209,0.2)',
+    focus:   '#8100D1',
+  },
+  glass:       'rgba(129,0,209,0.04)',
+  glassBorder: 'rgba(129,0,209,0.1)',
+};
+
+export let isAppDark = true;
+
+export const Colors = { ...DarkColors };
+
+const listeners = new Set();
+export function subscribeTheme(listener) {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+}
+
+export function toggleTheme() {
+  isAppDark = !isAppDark;
+  Object.assign(Colors, isAppDark ? DarkColors : LightColors);
+  listeners.forEach(l => l(isAppDark));
+}

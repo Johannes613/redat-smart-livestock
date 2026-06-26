@@ -15,7 +15,7 @@ export function AlertBanner({ alert, onPress, onDismiss }) {
   const cfg = SEVERITY[alert.severity];
   return (
     <Pressable onPress={onPress} accessibilityRole="button">
-      <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: Spacing[3], padding: Spacing[3], backgroundColor: cfg.color + '15', borderRadius: Radius.lg, borderWidth: 1, borderColor: cfg.color + '40', borderLeftWidth: 3, borderLeftColor: cfg.color }}>
+      <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: Spacing[3], padding: Spacing[3], backgroundColor: Colors.bg.card, borderRadius: Radius.lg, borderWidth: 1, borderColor: Colors.border.default }}>
         <Ionicons name={cfg.icon} size={20} color={cfg.color} />
         <View style={{ flex: 1, gap: 2 }}>
           <Text variant="titleSmall" color={cfg.color}>{alert.type.replace(/_/g, ' ').toUpperCase()}</Text>

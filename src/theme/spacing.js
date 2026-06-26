@@ -10,8 +10,8 @@ export const Radius = {
 };
 
 export const Shadow = {
-  sm:   { shadowColor: '#8100D1', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.12, shadowRadius: 6,  elevation: 2 },
-  md:   { shadowColor: '#8100D1', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.18, shadowRadius: 14, elevation: 5 },
-  lg:   { shadowColor: '#8100D1', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.25, shadowRadius: 24, elevation: 10 },
-  glow: { shadowColor: '#8100D1', shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.55, shadowRadius: 20, elevation: 12 },
+  sm:   { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2, elevation: 1 },
+  md:   { shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 2 },
+  lg:   { shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 3 },
+  glow: { }, // Removed glow
 };

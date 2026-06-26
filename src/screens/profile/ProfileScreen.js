@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, ScrollView, Pressable } from 'react-native';
+import { View, ScrollView, Pressable, Switch } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
+
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing, Radius } from '../../theme';
+import { Colors, Spacing, Radius, isAppDark, toggleTheme } from '../../theme';
 import { Text, Card, Badge, Button } from '../../components/ui';
 import { mockUser, mockFarm, mockAnalytics } from '../../data/mockData';
 
@@ -21,6 +21,7 @@ const MENU_ITEMS = [
   { icon: 'document-text-outline', label: 'Reports',      badge: null },
   { icon: 'people-outline',    label: 'Veterinarians',    badge: null },
   { icon: 'language-outline',  label: 'Language',         badge: 'EN' },
+  { icon: 'moon-outline',      label: 'Dark Mode',        isToggle: true },
   { icon: 'notifications-outline', label: 'Notifications', badge: '3' },
   { icon: 'shield-checkmark-outline', label: 'Privacy',   badge: null },
   { icon: 'help-circle-outline', label: 'Help & Support', badge: null },
@@ -42,9 +43,8 @@ export function ProfileScreen({ navigation }) {
 
       <ScrollView contentContainerStyle={{ gap: Spacing[4], paddingBottom: Spacing[10] }} showsVerticalScrollIndicator={false}>
         {/* Profile hero */}
-        <LinearGradient
-          colors={[Colors.accentMuted, 'transparent']}
-          style={{ margin: Spacing[4], borderRadius: Radius.xxl, padding: Spacing[5], borderWidth: 1, borderColor: Colors.accentBorder }}
+        <View
+          style={{ margin: Spacing[4], borderRadius: Radius.xxl, padding: Spacing[5], borderWidth: 1, borderColor: Colors.accentBorder, backgroundColor: Colors.bg.card }}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing[4] }}>
             <View style={{ width: 72, height: 72, borderRadius: 36, backgroundColor: Colors.bg.elevated, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: Colors.accent }}>
@@ -74,7 +74,7 @@ export function ProfileScreen({ navigation }) {
               </View>
             ))}
           </View>
-        </LinearGradient>
+        </View>
 
         {/* Farm info */}
         <View style={{ paddingHorizontal: Spacing[4] }}>
@@ -121,7 +121,11 @@ export function ProfileScreen({ navigation }) {
                 <Ionicons name={item.icon} size={20} color={item.danger ? Colors.error : Colors.text.secondary} />
                 <Text variant="bodyMedium" color={item.danger ? Colors.error : Colors.text.primary} style={{ flex: 1 }}>{item.label}</Text>
                 {item.badge && <Badge label={item.badge} color={item.danger ? Colors.error : Colors.accent} size="sm" />}
-                {!item.danger && <Ionicons name="chevron-forward" size={16} color={Colors.text.tertiary} />}
+                {item.isToggle ? (
+                  <Switch value={isAppDark} onValueChange={toggleTheme} trackColor={{ true: Colors.accent }} />
+                ) : !item.danger ? (
+                  <Ionicons name="chevron-forward" size={16} color={Colors.text.tertiary} />
+                ) : null}
               </Pressable>
             ))}
           </Card>

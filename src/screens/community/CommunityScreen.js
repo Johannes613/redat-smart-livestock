@@ -6,6 +6,7 @@ import { Colors, Spacing, Radius } from '../../theme';
 import { Text, Button, Badge } from '../../components/ui';
 import { PinCard, PIN_CONFIG } from '../../components/community/PinCard';
 import { mockPins } from '../../data/mockData';
+import { useCommunityStore } from '../../store/useCommunityStore';
 
 const CATEGORIES = [
   { key: 'all',                 label: 'All' },
@@ -19,7 +20,8 @@ const CATEGORIES = [
 
 export function CommunityScreen({ navigation }) {
   const [category, setCategory] = useState('all');
-  const [pins, setPins] = useState(mockPins);
+  const pins = useCommunityStore(state => state.pins);
+  const toggleLike = useCommunityStore(state => state.toggleLike);
 
   const filtered = useMemo(() =>
     category === 'all' ? pins : pins.filter(p => p.category === category),
@@ -27,7 +29,7 @@ export function CommunityScreen({ navigation }) {
   );
 
   const handleLike = (pinId) => {
-    setPins(prev => prev.map(p => p.id === pinId ? { ...p, likes: p.likes + 1 } : p));
+    toggleLike(pinId, 'u1'); // 'u1' is mock user ID
   };
 
   return (

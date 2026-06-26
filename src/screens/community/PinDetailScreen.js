@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, ScrollView, Pressable, TextInput } from 'react-native';
+import { View, ScrollView, Pressable, TextInput, Share, Linking, Alert, Platform, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Spacing, Radius, FontFamily, FontSize } from '../../theme';
 import { Text, Card, Badge, Button } from '../../components/ui';
 import { PIN_CONFIG } from '../../components/community/PinCard';
 import { mockPins, mockUser } from '../../data/mockData';
+import { useCommunityStore } from '../../store/useCommunityStore';
 
 function timeAgo(d) {
   const diff = (Date.now() - new Date(d).getTime()) / 1000;
@@ -16,17 +17,39 @@ function timeAgo(d) {
 
 export function PinDetailScreen({ route, navigation }) {
   const { pinId } = route.params;
-  const [pin, setPin] = useState(mockPins.find(p => p.id === pinId) ?? mockPins[0]);
+  const pin = useCommunityStore(state => state.pins.find(p => p.id === pinId));
+  const addComment = useCommunityStore(state => state.addComment);
+  const toggleLike = useCommunityStore(state => state.toggleLike);
   const [comment, setComment] = useState('');
+  if (!pin) return null;
+
   const cfg = PIN_CONFIG[pin.category];
 
-  const handleLike = () => setPin(p => ({ ...p, likes: p.likes + 1 }));
+  const handleLike = () => toggleLike(pin.id, mockUser.id);
 
   const handleComment = () => {
     if (!comment.trim()) return;
     const newComment = { id: Date.now().toString(), authorId: mockUser.id, authorName: mockUser.name, text: comment.trim(), createdAt: new Date().toISOString() };
-    setPin(p => ({ ...p, comments: [newComment, ...p.comments] }));
+    addComment(pin.id, newComment);
     setComment('');
+  };
+
+  const handleShare = async () => {
+    try {
+      await Share.share({
+        message: `Check out this ${pin.title} on REDAT Community Map!`,
+      });
+    } catch (error) {
+      Alert.alert('Error', error.message);
+    }
+  };
+
+  const handleNavigate = () => {
+    const url = Platform.select({
+      ios: `maps:0,0?q=${pin.location.latitude},${pin.location.longitude}`,
+      android: `geo:0,0?q=${pin.location.latitude},${pin.location.longitude}(${pin.title})`
+    });
+    Linking.openURL(url).catch(() => Alert.alert('Navigate', 'No mapping app found.'));
   };
 
   return (
@@ -40,7 +63,7 @@ export function PinDetailScreen({ route, navigation }) {
         {pin.isVerified && <Ionicons name="checkmark-circle" size={20} color={Colors.success} />}
       </View>
 
-      <ScrollView contentContainerStyle={{ padding: Spacing[4], gap: Spacing[4], paddingBottom: Spacing[10] }} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={{ padding: Spacing[4], gap: Spacing[4], paddingBottom: Spacing[10] }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
         {/* Category icon */}
         <Card variant="glass">
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing[3], marginBottom: Spacing[3] }}>
@@ -66,17 +89,24 @@ export function PinDetailScreen({ route, navigation }) {
           </View>
         </Card>
 
+        {/* Uploaded Image */}
+        {pin.images && pin.images.length > 0 && (
+          <Card variant="glass" padding={0} style={{ overflow: 'hidden' }}>
+            <Image source={{ uri: pin.images[0] }} style={{ width: '100%', height: 200 }} resizeMode="cover" />
+          </Card>
+        )}
+
         {/* Actions */}
         <View style={{ flexDirection: 'row', gap: Spacing[3] }}>
           <Pressable onPress={handleLike} style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 12, backgroundColor: Colors.bg.card, borderRadius: Radius.lg, borderWidth: 1, borderColor: Colors.border.default }} accessibilityRole="button" accessibilityLabel={`Like, ${pin.likes} likes`}>
             <Ionicons name="heart" size={18} color={Colors.error} />
             <Text variant="labelMedium" color={Colors.text.primary}>{pin.likes} Likes</Text>
           </Pressable>
-          <Pressable style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 12, backgroundColor: Colors.bg.card, borderRadius: Radius.lg, borderWidth: 1, borderColor: Colors.border.default }} accessibilityRole="button">
+          <Pressable onPress={handleShare} style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 12, backgroundColor: Colors.bg.card, borderRadius: Radius.lg, borderWidth: 1, borderColor: Colors.border.default }} accessibilityRole="button">
             <Ionicons name="share-outline" size={18} color={Colors.info} />
             <Text variant="labelMedium" color={Colors.text.primary}>Share</Text>
           </Pressable>
-          <Pressable style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 12, backgroundColor: Colors.bg.card, borderRadius: Radius.lg, borderWidth: 1, borderColor: Colors.border.default }} accessibilityRole="button">
+          <Pressable onPress={handleNavigate} style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 12, backgroundColor: Colors.bg.card, borderRadius: Radius.lg, borderWidth: 1, borderColor: Colors.border.default }} accessibilityRole="button">
             <Ionicons name="navigate-outline" size={18} color={Colors.success} />
             <Text variant="labelMedium" color={Colors.text.primary}>Navigate</Text>
           </Pressable>

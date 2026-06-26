@@ -16,7 +16,7 @@ const SEVERITY_CFG = {
 function AlertItem({ alert, onDismiss }) {
   const cfg = SEVERITY_CFG[alert.severity];
   return (
-    <Card variant="default" style={{ borderLeftWidth: 3, borderLeftColor: cfg.color }}>
+    <Card variant="default">
       <View style={{ flexDirection: 'row', gap: Spacing[3] }}>
         <View style={{ width: 40, height: 40, borderRadius: Radius.full, backgroundColor: cfg.color + '20', alignItems: 'center', justifyContent: 'center' }}>
           <Ionicons name={cfg.icon} size={20} color={cfg.color} />

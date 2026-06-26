@@ -16,7 +16,7 @@ const Tab = createBottomTabNavigator();
 
 function TabIcon({ name, focused, label, badge }) {
   return (
-    <View style={{ alignItems: 'center', gap: 3, paddingTop: 6 }}>
+    <View style={{ alignItems: 'center', gap: 4, paddingTop: 10, width: 80 }}>
       <View style={{ position: 'relative' }}>
         <Ionicons
           name={focused ? name : `${name}-outline`}
@@ -29,7 +29,7 @@ function TabIcon({ name, focused, label, badge }) {
           </View>
         )}
       </View>
-      <Text variant="caption" color={focused ? Colors.accent : Colors.text.tertiary} style={{ fontSize: 9.5 }}>{label}</Text>
+      <Text variant="caption" color={focused ? Colors.accent : Colors.text.tertiary} style={{ fontSize: 10 }} numberOfLines={1} adjustsFontSizeToFit>{label}</Text>
     </View>
   );
 }
@@ -38,7 +38,7 @@ function MapTabButton({ children, onPress }) {
   return (
     <Pressable
       onPress={onPress}
-      style={{ alignItems: 'center', justifyContent: 'center', top: -16 }}
+      style={{ alignItems: 'center', justifyContent: 'center', top: -12 }}
       accessibilityRole="button"
       accessibilityLabel="Map"
     >
@@ -46,8 +46,6 @@ function MapTabButton({ children, onPress }) {
         width: 58, height: 58, borderRadius: 29,
         backgroundColor: Colors.accent,
         alignItems: 'center', justifyContent: 'center',
-        shadowColor: Colors.accent, shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.55, shadowRadius: 14, elevation: 10,
       }}>
         <Ionicons name="map" size={28} color={Colors.white} />
       </View>
@@ -66,7 +64,7 @@ export function TabNavigator() {
           backgroundColor: Colors.bg.surface,
           borderTopWidth: 1,
           borderTopColor: Colors.border.default,
-          height: 60 + insets.bottom,
+          height: 68 + insets.bottom,
           paddingBottom: insets.bottom,
           elevation: 0,
           shadowOpacity: 0,

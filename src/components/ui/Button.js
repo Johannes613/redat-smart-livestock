@@ -3,24 +3,6 @@ import { Pressable, ActivityIndicator, View } from 'react-native';
 import { Colors, Radius } from '../../theme';
 import { Text } from './Text';
 
-const BG = {
-  primary:   Colors.accent,
-  secondary: Colors.bg.elevated,
-  ghost:     'transparent',
-  danger:    Colors.error,
-  outline:   'transparent',
-};
-const FG = {
-  primary:   Colors.white,
-  secondary: Colors.text.primary,
-  ghost:     Colors.text.secondary,
-  danger:    Colors.white,
-  outline:   Colors.accent,
-};
-const BORDER_STYLE = {
-  secondary: { borderWidth: 1, borderColor: Colors.border.default },
-  outline:   { borderWidth: 1, borderColor: Colors.accent },
-};
 const PAD = {
   sm: { paddingVertical: 8,  paddingHorizontal: 14, minHeight: 36 },
   md: { paddingVertical: 12, paddingHorizontal: 20, minHeight: 48 },
@@ -40,6 +22,25 @@ export function Button({
   style,
   ...props
 }) {
+  const BG = {
+    primary:   Colors.accent,
+    secondary: Colors.bg.elevated,
+    ghost:     'transparent',
+    danger:    Colors.error,
+    outline:   'transparent',
+  };
+  const FG = {
+    primary:   Colors.white,
+    secondary: Colors.text.primary,
+    ghost:     Colors.text.secondary,
+    danger:    Colors.white,
+    outline:   Colors.accent,
+  };
+  const BORDER_STYLE = {
+    secondary: { borderWidth: 1, borderColor: Colors.border.default },
+    outline:   { borderWidth: 1, borderColor: Colors.accent },
+  };
+
   const off = disabled || loading;
   return (
     <Pressable

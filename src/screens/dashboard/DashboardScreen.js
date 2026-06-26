@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, ScrollView, Pressable, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
+
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Spacing, Radius } from '../../theme';
 import { Text, Card, Badge } from '../../components/ui';
@@ -61,10 +61,8 @@ export function DashboardScreen({ navigation }) {
         </View>
 
         {/* Weather banner */}
-        <LinearGradient
-          colors={[Colors.accentMuted, 'rgba(129,0,209,0.04)']}
-          start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
-          style={{ borderRadius: Radius.xl, padding: Spacing[4], borderWidth: 1, borderColor: Colors.accentBorder, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
+        <View
+          style={{ backgroundColor: Colors.bg.card, borderRadius: Radius.xl, padding: Spacing[4], borderWidth: 1, borderColor: Colors.accentBorder, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
         >
           <View>
             <Text variant="overline" color={Colors.text.tertiary}>AL QUA'A, UAE · NOW</Text>
@@ -78,7 +76,7 @@ export function DashboardScreen({ navigation }) {
             <Ionicons name="sunny" size={40} color={Colors.warning} />
             <Badge label="HEAT RISK" color={Colors.warning} size="sm" />
           </View>
-        </LinearGradient>
+        </View>
 
         {/* Stats grid */}
         <View>
@@ -93,15 +91,31 @@ export function DashboardScreen({ navigation }) {
           </View>
         </View>
 
+        {/* Regional Alert */}
+        {alerts.filter(a => a.type === 'regional_alert' && !a.isRead).length > 0 && (
+          <View style={{ backgroundColor: Colors.error + '15', borderColor: Colors.error + '40', borderWidth: 1, borderRadius: Radius.lg, padding: Spacing[4] }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing[2], marginBottom: Spacing[2] }}>
+              <Ionicons name="warning" size={20} color={Colors.error} />
+              <Text variant="titleMedium" color={Colors.error}>⚠ Regional Alert</Text>
+            </View>
+            <Text variant="bodyMedium" color={Colors.text.primary} style={{ marginBottom: Spacing[1] }}>
+              {alerts.find(a => a.type === 'regional_alert').message}
+            </Text>
+            <Text variant="caption" color={Colors.text.secondary}>
+              {alerts.find(a => a.type === 'regional_alert').recommendation}
+            </Text>
+          </View>
+        )}
+
         {/* Active alerts */}
-        {alerts.filter(a => !a.isRead).length > 0 && (
+        {alerts.filter(a => !a.isRead && a.type !== 'regional_alert').length > 0 && (
           <View>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing[3] }}>
-              <Text variant="overline" color={Colors.text.tertiary}>ACTIVE ALERTS</Text>
-              <Badge label={`${alerts.filter(a => !a.isRead).length} new`} color={Colors.error} size="sm" />
+              <Text variant="overline" color={Colors.text.tertiary}>HERD ALERTS</Text>
+              <Badge label={`${alerts.filter(a => !a.isRead && a.type !== 'regional_alert').length} new`} color={Colors.error} size="sm" />
             </View>
             <View style={{ gap: Spacing[2] }}>
-              {alerts.filter(a => !a.isRead).map(alert => (
+              {alerts.filter(a => !a.isRead && a.type !== 'regional_alert').map(alert => (
                 <AlertBanner
                   key={alert.id}
                   alert={alert}

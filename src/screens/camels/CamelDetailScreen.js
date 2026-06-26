@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, ScrollView, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
+
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Spacing, Radius } from '../../theme';
 import { Text, Card, Badge, Button, ProgressRing } from '../../components/ui';
@@ -33,9 +33,8 @@ export function CamelDetailScreen({ route, navigation }) {
 
       <ScrollView contentContainerStyle={{ paddingBottom: Spacing[10] }} showsVerticalScrollIndicator={false}>
         {/* Hero card */}
-        <LinearGradient
-          colors={[Colors.accentMuted, 'transparent']}
-          style={{ margin: Spacing[4], borderRadius: Radius.xxl, padding: Spacing[5], borderWidth: 1, borderColor: Colors.accentBorder }}
+        <View
+          style={{ margin: Spacing[4], borderRadius: Radius.xxl, padding: Spacing[5], borderWidth: 1, borderColor: Colors.accentBorder, backgroundColor: Colors.bg.card }}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing[4] }}>
             <View style={{ width: 80, height: 80, borderRadius: Radius.xxl, backgroundColor: Colors.bg.elevated, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.accentBorder }}>
@@ -69,7 +68,7 @@ export function CamelDetailScreen({ route, navigation }) {
               </View>
             ))}
           </View>
-        </LinearGradient>
+        </View>
 
         {/* Live collar widget */}
         {camel.collarId && (
