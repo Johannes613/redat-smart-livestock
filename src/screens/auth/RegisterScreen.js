@@ -29,7 +29,7 @@ export function RegisterScreen({ navigation }) {
           <View style={{ marginBottom: Spacing[8] }}>
             <Text variant="headlineMedium">Create Account</Text>
             <Text variant="bodyMedium" color={Colors.text.secondary} style={{ marginTop: 4 }}>
-              Join the ASEEL farming community
+              Join the REDAT farming community
             </Text>
           </View>
 

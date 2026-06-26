@@ -91,7 +91,7 @@ export function SettingsScreen({ navigation }) {
               { icon: 'person-outline',          label: 'Edit Profile',        type: 'nav' },
               { icon: 'lock-closed-outline',     label: 'Change Password',     type: 'nav' },
               { icon: 'document-text-outline',   label: 'Privacy Policy',      type: 'nav' },
-              { icon: 'information-circle-outline', label: 'About ASEEL v1.0', type: 'nav' },
+              { icon: 'information-circle-outline', label: 'About REDAT v1.0', type: 'nav' },
             ].map((item, i) => (
               <View key={item.label} style={{ borderTopWidth: i === 0 ? 0 : 1, borderTopColor: Colors.border.muted }}>
                 <SettingRow {...item} />

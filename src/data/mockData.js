@@ -81,7 +81,7 @@ export const mockNotifications = [
 ];
 
 export const mockChatHistory = [
-  { id: 'm1', role: 'assistant', content: 'Marhaba! I am ASEEL, your AI camel farming assistant. How can I help you today?', timestamp: new Date(Date.now() - 600000).toISOString() },
+  { id: 'm1', role: 'assistant', content: 'Marhaba! I am REDAT, your AI camel farming assistant. How can I help you today?', timestamp: new Date(Date.now() - 600000).toISOString() },
   { id: 'm2', role: 'user',      content: 'Where is the nearest water source?', timestamp: new Date(Date.now() - 500000).toISOString() },
   { id: 'm3', role: 'assistant', content: 'Based on community reports in your area, the closest verified water source is the **Fresh water well at Wadi Al Ain**, approximately 2.1km northeast of your farm. It was verified by Ahmed Al Rashidi 2 days ago and can accommodate up to 50 camels. Shall I show it on the map?', timestamp: new Date(Date.now() - 480000).toISOString() },
 ];

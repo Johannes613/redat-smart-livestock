@@ -174,7 +174,7 @@ export function DashboardScreen({ navigation }) {
             style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: Spacing[3] }}
             accessibilityRole="button"
           >
-            <Text variant="labelSmall" color={Colors.accent}>Ask ASEEL AI for advice</Text>
+            <Text variant="labelSmall" color={Colors.accent}>Ask REDAT AI for advice</Text>
             <Ionicons name="arrow-forward" size={14} color={Colors.accent} />
           </Pressable>
         </Card>

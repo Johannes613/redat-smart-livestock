@@ -2,6 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Colors } from '../theme';
+import { DefaultTheme } from '@react-navigation/native';
 
 import { TabNavigator }       from './TabNavigator';
 import { LoginScreen }        from '../screens/auth/LoginScreen';
@@ -40,6 +41,7 @@ export function AppNavigator() {
           border:     Colors.border.default,
           notification: Colors.error,
         },
+        fonts: DefaultTheme.fonts,
       }}
     >
       <Stack.Navigator screenOptions={screenOptions}>

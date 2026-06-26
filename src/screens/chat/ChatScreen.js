@@ -61,7 +61,7 @@ export function ChatScreen({ navigation }) {
             <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: Colors.accentMuted, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.accentBorder }}>
               <Ionicons name="sparkles" size={12} color={Colors.accent} />
             </View>
-            <Text variant="caption" color={Colors.accent}>ASEEL AI</Text>
+            <Text variant="caption" color={Colors.accent}>REDAT AI</Text>
           </View>
         )}
         <View style={{
@@ -96,7 +96,7 @@ export function ChatScreen({ navigation }) {
           <Ionicons name="sparkles" size={20} color={Colors.accent} />
         </View>
         <View style={{ flex: 1 }}>
-          <Text variant="titleMedium">ASEEL AI</Text>
+          <Text variant="titleMedium">REDAT AI</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
             <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: Colors.success }} />
             <Text variant="caption" color={Colors.success}>Online · Arabic & English</Text>
@@ -117,7 +117,7 @@ export function ChatScreen({ navigation }) {
               {/* Intro card */}
               <LinearGradient colors={[Colors.accentMuted, 'transparent']} style={{ borderRadius: Radius.xl, padding: Spacing[4], borderWidth: 1, borderColor: Colors.accentBorder }}>
                 <Text variant="titleSmall" color={Colors.accent} style={{ marginBottom: 4 }}>
-                  Welcome to ASEEL AI 🐪
+                  Welcome to REDAT AI 🐪
                 </Text>
                 <Text variant="bodySmall" color={Colors.text.secondary}>
                   I have access to your farm data, community pins, weather, and regional disease reports. Ask me anything in Arabic or English.
@@ -147,7 +147,7 @@ export function ChatScreen({ navigation }) {
                   <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: Colors.accentMuted, alignItems: 'center', justifyContent: 'center' }}>
                     <Ionicons name="sparkles" size={12} color={Colors.accent} />
                   </View>
-                  <Text variant="caption" color={Colors.accent}>ASEEL AI is thinking...</Text>
+                  <Text variant="caption" color={Colors.accent}>REDAT AI is thinking...</Text>
                 </View>
                 <View style={{ flexDirection: 'row', gap: 6, padding: Spacing[3], backgroundColor: Colors.bg.card, borderRadius: Radius.xl, borderBottomLeftRadius: 4 }}>
                   {[0, 1, 2].map(i => (
@@ -167,7 +167,7 @@ export function ChatScreen({ navigation }) {
           </Pressable>
           <TextInput
             style={{ flex: 1, minHeight: 40, maxHeight: 120, backgroundColor: Colors.bg.elevated, borderRadius: Radius.xl, borderWidth: 1, borderColor: Colors.border.default, paddingHorizontal: 14, paddingVertical: 10, fontFamily: FontFamily.mono, fontSize: FontSize.base, color: Colors.text.primary }}
-            placeholder="Ask ASEEL AI..."
+            placeholder="Ask REDAT AI..."
             placeholderTextColor={Colors.text.tertiary}
             value={input}
             onChangeText={setInput}

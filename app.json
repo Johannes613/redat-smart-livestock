@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "ASEEL",
-    "slug": "aseel",
+    "name": "REDAT",
+    "slug": "redat",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -13,12 +13,12 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.aseel.app",
+      "bundleIdentifier": "com.redat.app",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "ASEEL needs your location to track camels and show nearby community alerts.",
-        "NSCameraUsageDescription": "ASEEL uses the camera for camel photos and QR code scanning.",
-        "NSMicrophoneUsageDescription": "ASEEL uses the microphone for Arabic voice notes.",
-        "NSPhotoLibraryUsageDescription": "ASEEL accesses photos to upload camel images."
+        "NSLocationWhenInUseUsageDescription": "REDAT needs your location to track camels and show nearby community alerts.",
+        "NSCameraUsageDescription": "REDAT uses the camera for camel photos and QR code scanning.",
+        "NSMicrophoneUsageDescription": "REDAT uses the microphone for Arabic voice notes.",
+        "NSPhotoLibraryUsageDescription": "REDAT accesses photos to upload camel images."
       }
     },
     "android": {
@@ -28,7 +28,7 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "package": "com.aseel.app"
+      "package": "com.redat.app"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -38,7 +38,7 @@
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "Allow ASEEL to use your location."
+          "locationAlwaysAndWhenInUsePermission": "Allow REDAT to use your location."
         }
       ]
     ]

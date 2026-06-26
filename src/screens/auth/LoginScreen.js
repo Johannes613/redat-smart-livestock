@@ -34,7 +34,7 @@ export function LoginScreen({ navigation }) {
             <View style={{ width: 80, height: 80, borderRadius: Radius.xxl, backgroundColor: Colors.accentMuted, borderWidth: 1, borderColor: Colors.accentBorder, alignItems: 'center', justifyContent: 'center', marginBottom: Spacing[4] }}>
               <Text style={{ fontSize: 40 }}>🐪</Text>
             </View>
-            <Text variant="headlineLarge" color={Colors.accent} align="center">ASEEL</Text>
+            <Text variant="headlineLarge" color={Colors.accent} align="center">REDAT</Text>
             <Text variant="bodySmall" color={Colors.text.secondary} align="center" style={{ marginTop: 4 }}>
               AI Smart Camel Guardian
             </Text>
