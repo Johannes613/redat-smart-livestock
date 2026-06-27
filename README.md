@@ -114,7 +114,7 @@ We compared against five other algorithms. CatBoost was selected not because it 
 | LightGBM | 80.86% | 80.64% | 18.26% |
 | Decision Tree (Baseline) | 74.15% | 74.63% | 25.85% |
 
-Full training pipeline, feature importance plots, and confusion matrices are available in the Jupyter notebook: [`ai_model_layer/REDAT_SmartLivestock.ipynb`](ai_model_layer/REDAT_SmartLivestock.ipynb).
+Full training pipeline, feature importance plots, and confusion matrices are available in the Jupyter notebook: [ai_model_layer/REDAT_SmartLivestock.ipynb](./ai_model_layer/REDAT_SmartLivestock.ipynb).
 
 ### Claim 2: The system detects health problems earlier than manual inspection.
 
