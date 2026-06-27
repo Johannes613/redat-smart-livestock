@@ -166,16 +166,6 @@ REDAT requires a ruggedized IoT collar on each camel. We designed the collar spe
 - **Scaling phase:** A local agricultural cooperative or extension office manages the web dashboard. Individual farmers use the mobile app independently.
 - **Maintenance:** Collars require battery monitoring (visible in the app) and periodic physical inspection. The software auto-updates via cloud deployment.
 
-### Honest obstacles
-
-| Obstacle | Our answer |
-|---|---|
-| **Cellular coverage in remote desert** | We selected the SIM800L GSM module because GSM (2G) has broader coverage in remote UAE areas than LTE. Data requirements are minimal (~2 KB per reading). For areas with no coverage, the collar can buffer readings locally and sync when signal returns. |
-| **Collar durability** | Camels are large animals in harsh environments. The collar casing must withstand sand, 50+ °C heat, and physical stress. This requires field testing — we have not yet stress-tested a physical prototype over a full summer season. |
-| **Farmer adoption** | Many farmers in Al Qua'a may not be tech-savvy. We designed the app with large touch targets, Arabic language support, and an AI chatbot that accepts natural language questions — but real adoption requires training sessions and local champion farmers to advocate. |
-| **Data is currently simulated** | Our demo uses realistic mock data modeled on published camel physiology ranges. The ML model is trained on synthetic data generated from veterinary literature distributions. We have not yet connected a physical collar to the system. This is the primary gap for a production deployment. |
-
----
 
 ## 6. Scalability
 
