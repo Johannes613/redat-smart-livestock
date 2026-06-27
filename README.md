@@ -6,11 +6,10 @@
 
 ---
 
-<<<<<<< HEAD
+
 ## Table of Contents
-=======
+
 ## The Problem
->>>>>>> 48f1302fc2afa2f003476c2a4275b6c4f07a42b9
 
 1. [The Challenge and the Problem](#1-the-challenge-and-the-problem)
 2. [Who It Is For, and Their Situation](#2-who-it-is-for-and-their-situation)
@@ -21,7 +20,7 @@
 7. [Evidence and Validation](#7-evidence-and-validation)
 8. [How to Run or Verify It, and Tools Used](#8-how-to-run-or-verify-it-and-tools-used)
 
----
+
 
 ## 1. The Challenge and the Problem
 
