@@ -4,12 +4,9 @@
 
 📽️ **[▶ Watch the Demo Video](https://youtu.be/YOUR_DEMO_LINK_HERE)**
 
----
 
 
 ## Table of Contents
-
-## The Problem
 
 1. [The Challenge and the Problem](#1-the-challenge-and-the-problem)
 2. [Who It Is For, and Their Situation](#2-who-it-is-for-and-their-situation)
@@ -323,6 +320,7 @@ npm run dev
 Opens at `http://localhost:5173`.
 
 ---
+<<<<<<< HEAD
 
 ### Tools and Technologies Used
 
@@ -391,4 +389,19 @@ redat-smart-livestock/
 
 ---
 
+### Pre-Submission Self-Check
+
+| Question | Answer |
+|---|---|
+| Does every claim have evidence behind it? | ✅ ML accuracy backed by notebook results. Hardware costs sourced from suppliers. Impact claims are either evidenced or explicitly marked as not yet validated. |
+| Have we been honest about what does not work yet? | ✅ See Section 7.3 — no physical collar prototype, no field trial, no real farmer testing, no production security. |
+| If a judge attacks our weakest point, have we already answered it? | ✅ Our weakest point (no physical collar) is addressed in Sections 5 and 7.3, with a clear explanation that the software pipeline is ready and the hardware BOM is specified. |
+| Could someone run or verify the project from the README alone? | ✅ Step-by-step instructions with curl verification commands provided. |
+| Have we addressed all seven criteria? | ✅ Impact (§2, §4), Relevance (§1), Feasibility (§5), Readiness (§7.2, §8), Scalability (§6), Evidence (§4, §7), Documentation (§8). |
+
+---
+
 *Developed with 🐪 passion for the Tatweer Hackathon 2026 — enabling the next generation of smart agriculture in Al Qua'a, Al Ain.*
+=======
+*Developed with 🐪 passion for the Tatweer Hackathon 2026. Enabling the next generation of smart agriculture in Al Qua'a, Al Ain.*
+>>>>>>> 48f1302fc2afa2f003476c2a4275b6c4f07a42b9
