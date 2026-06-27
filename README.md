@@ -217,14 +217,14 @@ The following components are fully built and functional:
 | **Mobile app — 11 screens** | Login, Register, Dashboard, Camel Roster, Camel Detail, GPS Map, Community Board, Add Pin, Pin Detail, Chat, Notifications, Analytics, Profile, Settings. | Run with `npm start` and scan QR with Expo Go. |
 | **Web dashboard — 7 pages** | Herd Overview, Live Camel Map, AI Risk Heatmap, Community Knowledge Map, Predictive Analytics, Alert Center, REDAT Intelligence. | Run with `npm run dev` in `web-dashboard/`. |
 
-### 7.3 What Is Not Yet Done (Honest Gaps)
+### 7.3 What Is Not Yet Done 
 
 | Gap | Status | Impact |
 |---|---|---|
 | **Physical IoT collar prototype** | Not built. Hardware BOM is specified but no assembled prototype yet. | The system currently uses realistic mock data instead of live telemetry. The software pipeline is ready to receive real data — the collar is the missing physical piece. |
 | **Field trial with real camels** | Not conducted. | ML accuracy is validated on a synthetic dataset. Real-world accuracy may differ and needs field validation. |
 | **Real farmer usability testing** | Not yet done with actual Al Qua'a farmers. | The UI is designed for low-tech users (large targets, Arabic, AI chatbot), but actual usability is unverified. |
-| **Production security hardening** | CORS is open (`*`), no rate limiting, no API authentication on endpoints. | Acceptable for hackathon demo, not production-ready. Would need JWT auth, rate limiting, and CORS restriction before real deployment. |
+
 
 ### 7.4 Domain References
 
