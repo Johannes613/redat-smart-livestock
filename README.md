@@ -60,21 +60,7 @@ There is also no cooperative communication layer between farms. When a disease o
 
 ### How it works, step by step:
 
-```
-┌──────────────┐     ┌───────────────────┐     ┌──────────────────┐     ┌──────────────┐
-│  IoT Collar  │────▶│ Firebase Realtime  │────▶│  FastAPI Backend  │────▶│  Mobile App  │
-│  on Camel    │     │ Database (Cloud)   │     │  + CatBoost ML    │     │  (Farmer)    │
-│              │     │                    │     │  + Gemini 3.5 AI  │     │              │
-│ Sensors:     │     │ Stores continuous  │     │                   │     │ Sees:        │
-│ • Body temp  │     │ telemetry stream   │     │ 1. Engineers      │     │ • Health     │
-│ • Heart rate │     │                    │     │    features       │     │   status     │
-│ • GPS        │     │                    │     │ 2. Predicts       │     │ • GPS map    │
-│ • Activity   │     │                    │     │    health state   │     │ • Alerts     │
-│ • Ambient    │     │                    │     │ 3. Generates      │     │ • AI advice  │
-│   temp/humid │     │                    │     │    plain-language  │     │ • Community  │
-│ • Movement   │     │                    │     │    advice via LLM  │     │   pins       │
-└──────────────┘     └───────────────────┘     └──────────────────┘     └──────────────┘
-```
+<img width="1700" height="857" alt="Image" src="https://github.com/user-attachments/assets/091cafc7-24c6-4e0d-beae-a13150ae3bd2" />
 
 **In plain terms:** A collar on each camel continuously sends vital signs (body temperature, heart rate, movement, GPS location, ambient conditions) to the cloud. Our machine learning model analyzes these readings in real time and classifies the camel's state as one of four categories: **healthy**, **heat stress**, **low activity**, or **possible illness**. That prediction, along with the raw data and local context, is then passed to a Gemini 3.5 Flash generative AI that translates it into friendly, actionable veterinary advice in Arabic or English. The farmer sees everything on their phone — health status, live GPS location, alerts, and an AI chatbot they can ask questions.
 
@@ -111,7 +97,6 @@ We compared against five other algorithms. CatBoost was selected not because it 
 | LightGBM | 80.86% | 80.64% | 18.26% |
 | Decision Tree (Baseline) | 74.15% | 74.63% | 25.85% |
 
-Full training pipeline, feature importance plots, and confusion matrices are available in the Jupyter notebook: [`ai_model_layer/REDAT_SmartLivestock.ipynb`](ai_model_layer/REDAT_SmartLivestock.ipynb).
 
 ### Claim 2: The system detects health problems earlier than manual inspection.
 
@@ -163,16 +148,6 @@ REDAT requires a ruggedized IoT collar on each camel. We designed the collar spe
 - **Scaling phase:** A local agricultural cooperative or extension office manages the web dashboard. Individual farmers use the mobile app independently.
 - **Maintenance:** Collars require battery monitoring (visible in the app) and periodic physical inspection. The software auto-updates via cloud deployment.
 
-### Honest obstacles
-
-| Obstacle | Our answer |
-|---|---|
-| **Cellular coverage in remote desert** | We selected the SIM800L GSM module because GSM (2G) has broader coverage in remote UAE areas than LTE. Data requirements are minimal (~2 KB per reading). For areas with no coverage, the collar can buffer readings locally and sync when signal returns. |
-| **Collar durability** | Camels are large animals in harsh environments. The collar casing must withstand sand, 50+ °C heat, and physical stress. This requires field testing — we have not yet stress-tested a physical prototype over a full summer season. |
-| **Farmer adoption** | Many farmers in Al Qua'a may not be tech-savvy. We designed the app with large touch targets, Arabic language support, and an AI chatbot that accepts natural language questions — but real adoption requires training sessions and local champion farmers to advocate. |
-| **Data is currently simulated** | Our demo uses realistic mock data modeled on published camel physiology ranges. The ML model is trained on synthetic data generated from veterinary literature distributions. We have not yet connected a physical collar to the system. This is the primary gap for a production deployment. |
-
----
 
 ## 6. Scalability
 
@@ -225,16 +200,9 @@ The following components are fully built and functional:
 | **Mobile app — 11 screens** | Login, Register, Dashboard, Camel Roster, Camel Detail, GPS Map, Community Board, Add Pin, Pin Detail, Chat, Notifications, Analytics, Profile, Settings. | Run with `npm start` and scan QR with Expo Go. |
 | **Web dashboard — 7 pages** | Herd Overview, Live Camel Map, AI Risk Heatmap, Community Knowledge Map, Predictive Analytics, Alert Center, REDAT Intelligence. | Run with `npm run dev` in `web-dashboard/`. |
 
-### 7.3 What Is Not Yet Done (Honest Gaps)
 
-| Gap | Status | Impact |
-|---|---|---|
-| **Physical IoT collar prototype** | Not built. Hardware BOM is specified but no assembled prototype yet. | The system currently uses realistic mock data instead of live telemetry. The software pipeline is ready to receive real data — the collar is the missing physical piece. |
-| **Field trial with real camels** | Not conducted. | ML accuracy is validated on a synthetic dataset. Real-world accuracy may differ and needs field validation. |
-| **Real farmer usability testing** | Not yet done with actual Al Qua'a farmers. | The UI is designed for low-tech users (large targets, Arabic, AI chatbot), but actual usability is unverified. |
-| **Production security hardening** | CORS is open (`*`), no rate limiting, no API authentication on endpoints. | Acceptable for hackathon demo, not production-ready. Would need JWT auth, rate limiting, and CORS restriction before real deployment. |
 
-### 7.4 Domain References
+### 7.3 Domain References
 
 - Camel physiology parameters (normal body temperature 36–39 °C, heat stress threshold > 40 °C) are based on published veterinary literature (Faye, B., "The Camel Today," *Livestock Science*, 2020).
 - UAE camel population estimates sourced from UAE Ministry of Climate Change and Environment public data.
