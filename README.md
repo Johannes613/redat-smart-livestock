@@ -63,21 +63,7 @@ There is also no cooperative communication layer between farms. When a disease o
 
 ### How it works, step by step:
 
-```
-┌──────────────┐     ┌───────────────────┐     ┌──────────────────┐     ┌──────────────┐
-│  IoT Collar  │────▶│ Firebase Realtime  │────▶│  FastAPI Backend  │────▶│  Mobile App  │
-│  on Camel    │     │ Database (Cloud)   │     │  + CatBoost ML    │     │  (Farmer)    │
-│              │     │                    │     │  + Gemini 3.5 AI  │     │              │
-│ Sensors:     │     │ Stores continuous  │     │                   │     │ Sees:        │
-│ • Body temp  │     │ telemetry stream   │     │ 1. Engineers      │     │ • Health     │
-│ • Heart rate │     │                    │     │    features       │     │   status     │
-│ • GPS        │     │                    │     │ 2. Predicts       │     │ • GPS map    │
-│ • Activity   │     │                    │     │    health state   │     │ • Alerts     │
-│ • Ambient    │     │                    │     │ 3. Generates      │     │ • AI advice  │
-│   temp/humid │     │                    │     │    plain-language  │     │ • Community  │
-│ • Movement   │     │                    │     │    advice via LLM  │     │   pins       │
-└──────────────┘     └───────────────────┘     └──────────────────┘     └──────────────┘
-```
+<img width="1700" height="857" alt="Image" src="https://github.com/user-attachments/assets/091cafc7-24c6-4e0d-beae-a13150ae3bd2" />
 
 **In plain terms:** A collar on each camel continuously sends vital signs (body temperature, heart rate, movement, GPS location, ambient conditions) to the cloud. Our machine learning model analyzes these readings in real time and classifies the camel's state as one of four categories: **healthy**, **heat stress**, **low activity**, or **possible illness**. That prediction, along with the raw data and local context, is then passed to a Gemini 3.5 Flash generative AI that translates it into friendly, actionable veterinary advice in Arabic or English. The farmer sees everything on their phone — health status, live GPS location, alerts, and an AI chatbot they can ask questions.
 
