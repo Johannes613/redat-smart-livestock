@@ -21,7 +21,7 @@
 
 ## 1. The Challenge and the Problem
 
-**Challenge selected:** Rural Digital Infrastructure
+**Challenge selected:** Challenge 5(free choice) - Rural Digital Infrastructure
 
 **Specific problem:** Camel farmers in Al Qua'a, Al Ain, have no continuous, data-driven way to monitor the health of their herds. Today, livestock health management is entirely reactive — a farmer detects illness, heat stress, or dehydration only when a camel shows visible physical collapse. By that point, veterinary intervention is often too late or too expensive.
 
