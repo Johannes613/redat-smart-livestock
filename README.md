@@ -2,7 +2,7 @@
 
 > **Tatweer Hackathon 2026 · Al Qua'a, Al Ain · In collaboration with Abu Dhabi University**
 
-📽️ **[▶ Watch the Demo Video](https://youtu.be/YOUR_DEMO_LINK_HERE)**
+📽️ **[▶ Watch the Demo Video](https://youtu.be/YBkG0NcweUk?si=bqqUr6gzTcIF_6th)**
 
 
 
@@ -288,88 +288,4 @@ npm run dev
 Opens at `http://localhost:5173`.
 
 ---
-<<<<<<< HEAD
-
-### Tools and Technologies Used
-
-| Layer | Tools |
-|---|---|
-| **Mobile app** | React Native (Expo 54), React Navigation 7, Zustand 5 (state management), React Query 5, React Native Maps, React Native Reanimated 4, Expo Location, Expo Camera, Expo Haptics |
-| **Web dashboard** | React 19, Vite 8, React Router 7, Recharts 3 (visual analytics), Leaflet / React-Leaflet (maps), Lucide React (icons) |
-| **AI & ML backend** | Python 3, FastAPI, CatBoost, XGBoost, Scikit-Learn, Pandas, Joblib, Google Generative AI SDK (Gemini 3.5 Flash), Uvicorn |
-| **Database & Auth** | Firebase Realtime Database, Firebase Authentication |
-| **ML notebook** | Jupyter Notebook, Matplotlib, Seaborn (visualization during training) |
-| **Version control** | Git, GitHub |
-| **AI tools used** | GitHub Copilot and Gemini were used to assist with code generation, debugging, and documentation during the hackathon. All architecture decisions, ML pipeline design, and domain logic are our own. |
-
----
-
-### Repository Structure
-
-```
-redat-smart-livestock/
-├── ai_model_layer/                    # Backend + ML
-│   ├── main.py                        # FastAPI server (prediction + chat endpoints)
-│   ├── requirements.txt               # Python dependencies
-│   ├── REDAT_SmartLivestock.ipynb      # Full ML training & validation notebook
-│   └── redat_smart_livestock_model/    # Serialized model artifacts
-│       ├── redat_best_model.pkl        # Trained CatBoost classifier
-│       ├── redat_catboost.cbm          # CatBoost native format
-│       ├── redat_scaler.pkl            # Feature scaler
-│       ├── redat_label_encoder.pkl     # Label encoder
-│       └── redat_feature_cols.pkl      # Feature column order
-├── src/                               # Mobile app (React Native)
-│   ├── screens/                       # 11 app screens
-│   │   ├── auth/                      #   Login, Register
-│   │   ├── dashboard/                 #   Home dashboard
-│   │   ├── camels/                    #   Camel roster & detail
-│   │   ├── map/                       #   GPS tracking map
-│   │   ├── community/                 #   Community pins, add pin, pin detail
-│   │   ├── chat/                      #   AI veterinary chatbot
-│   │   ├── alerts/                    #   Alert management
-│   │   ├── analytics/                 #   Herd analytics
-│   │   ├── notifications/             #   Push notifications
-│   │   ├── profile/                   #   User profile
-│   │   └── settings/                  #   App settings
-│   ├── components/                    # Reusable UI components
-│   ├── navigation/                    # React Navigation config
-│   ├── store/                         # Zustand state stores
-│   ├── data/                          # Mock data for demo
-│   └── theme/                         # Design system & colors
-├── web-dashboard/                     # Web admin dashboard
-│   └── src/
-│       ├── pages/                     # 7 dashboard pages
-│       │   ├── HerdOverview.jsx
-│       │   ├── LiveCamelMap.jsx
-│       │   ├── AIRiskHeatmap.jsx
-│       │   ├── RedatIntelligence.jsx
-│       │   ├── CommunityKnowledgeMap.jsx
-│       │   ├── PredictiveAnalytics.jsx
-│       │   └── AlertCenter.jsx
-│       ├── components/                # Layout & shared components
-│       ├── context/                   # Theme context
-│       └── data/                      # Dashboard mock data
-├── assets/                            # App icons, splash, architecture diagram
-├── App.js                             # Mobile app entry point
-├── app.json                           # Expo configuration
-└── package.json                       # Mobile app dependencies
-```
-
----
-
-### Pre-Submission Self-Check
-
-| Question | Answer |
-|---|---|
-| Does every claim have evidence behind it? | ✅ ML accuracy backed by notebook results. Hardware costs sourced from suppliers. Impact claims are either evidenced or explicitly marked as not yet validated. |
-| Have we been honest about what does not work yet? | ✅ See Section 7.3 — no physical collar prototype, no field trial, no real farmer testing, no production security. |
-| If a judge attacks our weakest point, have we already answered it? | ✅ Our weakest point (no physical collar) is addressed in Sections 5 and 7.3, with a clear explanation that the software pipeline is ready and the hardware BOM is specified. |
-| Could someone run or verify the project from the README alone? | ✅ Step-by-step instructions with curl verification commands provided. |
-| Have we addressed all seven criteria? | ✅ Impact (§2, §4), Relevance (§1), Feasibility (§5), Readiness (§7.2, §8), Scalability (§6), Evidence (§4, §7), Documentation (§8). |
-
----
-
-*Developed with 🐪 passion for the Tatweer Hackathon 2026 — enabling the next generation of smart agriculture in Al Qua'a, Al Ain.*
-=======
 *Developed with 🐪 passion for the Tatweer Hackathon 2026. Enabling the next generation of smart agriculture in Al Qua'a, Al Ain.*
->>>>>>> 48f1302fc2afa2f003476c2a4275b6c4f07a42b9
